@@ -6,6 +6,9 @@ import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
+//const API_URL = 'http://localhost:8080';
+const API_URL = 'https://coronawatchbis.herokuapp.com';
+
 
 //Styles
 const bodyStyle={
@@ -23,43 +26,34 @@ const buttonStyle={
     color:'#172B4D',
     float:'right'
 };
+const deleteButtonStyle={
+    borderColor:'#FFFFFF',
+    color:'#FFFFFF',
+    backgroundColor:'#CB0630',    
+};
+
 
 export default class Users extends Component {
  
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
-
-        
+   
         let loggedIn =true
-        // if(token==null){
-        //     loggedIn = false
-        // }
-        let type = ''
-        if(user_type==='Moderator'){
-           type='Moderator'
-        }
-        if(user_type==='Redactor'){
-            type='Redactor'
-         }
-    
-         if(user_type==='HealthAgent'){
-            type='HealthAgent'
-         }
+       
         this.state = {
              loggedIn,
-             type,
              users_list: [],
-             username :'',
+             userName :'',
              password :'',
              email : '',
-             first_name : '',
-             last_name: '',
-             user_type: ''
+             firstName : '',
+             lastName: '',
+             userType: ''
         }
         this.changeHandler =this.changeHandler.bind(this)
         this.submitHandler =this.submitHandler.bind(this)
+        this.onClickDeleteUser =this.onClickDeleteUser.bind(this)
+
     }
 
     changeHandler = (e) => {
@@ -69,15 +63,23 @@ export default class Users extends Component {
     submitHandler = e =>{
         e.preventDefault()
         console.log(this.state)
-        const token = localStorage.getItem("login")
-        axios.defaults.headers = {
-            "Content-Type" : "application/json",
-            Authorization: `Token ${token}`
-        };
+        //const token = localStorage.getItem("login")
+        // axios.defaults.headers = {
+        //     "Content-Type" : "application/json",
+        //     "Authorization": `Token ${token}`
+        // };
+    
         axios
-            .post('http://localhost:8080/Users/AddUser',{"idUser":"aa","userName":this.state.userName,"firstName":this.state.firstName,"secondName":this.state.last_name,"email":this.state.email,"passWord":this.state.passWord,"userType":this.state.userType})
+            .post( `${API_URL}/Users/AddUser `,{
+                "idUser":"",
+                "userName":this.state.userName,
+                "firstName":this.state.firstName,
+                "lastName":this.state.lastName,
+                "email":this.state.email,
+                "passWord":this.state.passWord,
+                "userType":this.state.userType
+            })
             .then(response => {
-                console.log(response)
                 console.log(response.data)
                 if (response.status === 200) {
                     console.log ("User created successfully");
@@ -89,26 +91,53 @@ export default class Users extends Component {
             .catch(error => {
                 console.log(error.message)
                 console.log(error)
-                console.log("username or email already used")
-                alert('the username or email are already used !');
+                console.log("userName or email already used")
+                alert('the userName or email are already used !');
             })
+            console.log(this.state)
+
 
     }
 
-     
+    //for deleting a USEr 
+    onClickDeleteUser = (username) =>{
+
+        const token = localStorage.getItem("login")
+        let url = `${API_URL}/Users/DeleteUser?username=${username}`;
+        axios.delete(url/*,{
+        headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+        }*/)
+        .then(response => {
+                console.log(response)
+                console.log(response.data)
+                if (response.status === 204) {
+                    console.log ("User deleted successfully")
+                    alert('User deleted successfully');
+                        window.location.reload();
+                }
+                window.location.reload();
+
+            })
+            .catch(error => {
+                console.log(error.message)
+                console.log(error)
+                
+            })
+
+    }
     componentDidMount(){
         //get list of users
-        const token = localStorage.getItem("login")
+        //const token = localStorage.getItem("login")
       
-        axios.get('http://localhost:8080/Users/', {
-            headers: {  
-              'content-type': 'multipart/form-data',
-              Authorization: `Token ${token}`
-            }
-          })
+
+        axios.get( `${API_URL}/Users `)
         .then(response => {
-            console.log(response)
+            console.log("hadi esmha response a chikh",response)
             this.setState({ users_list: response.data})
+            console.log("hadi esmha users list a chikh",this.state.users_list)
         })
         .catch(error => {
             console.log(error.message)
@@ -139,10 +168,10 @@ export default class Users extends Component {
             return <Redirect to="/redactor_dashboard"/>
         }
 
-        const {users_list,user_type,username,password, email, first_name, last_name} = this.state
+
+        const {users_list,userType,userName,password, email, firstName, lastName} = this.state
         return (
             <div>
-         
                 <Header/>
                 <Menu/>
 
@@ -192,10 +221,11 @@ export default class Users extends Component {
                                         <span className="fas fa-question-circle" />
                                     </div>
                                     </div>
-                                    <select id="user_type" className="form-control" name="user_type" value={user_type} onChange={this.changeHandler} style={{borderColor:'#009F95'}}>
-                                    <option value="1">Moderator</option>
-                                    <option value="3">Redactor</option>
-                                    <option value="2">Health Agent</option>
+                                    <select id="userType" className="form-control" name="userType" value={userType} onChange={this.changeHandler} style={{borderColor:'#009F95'}} required>
+                                        <option value="">Select a Type</option>
+                                        <option value="Moderator">Moderator</option>
+                                        <option value="Redactor">Redactor</option>
+                                        <option value="HealthAgent">Health Agent</option>
                                     </select>
                                 </div>
                                 <br></br>
@@ -205,7 +235,7 @@ export default class Users extends Component {
                                         <span className="fas fa-user" />
                                     </div>
                                     </div>
-                                    <input id="first_name"  type="text" name="first_name" className="form-control" placeholder="First Name" value={first_name} onChange={this.changeHandler}/>
+                                    <input id="firstName"  type="text" name="firstName" className="form-control" placeholder="First Name" value={firstName} onChange={this.changeHandler}/>
                                 </div>
                                 <div className="input-group mb-3">
                                     <div className="input-group-append">
@@ -213,7 +243,7 @@ export default class Users extends Component {
                                         <span className="fas fa-user" />
                                     </div>
                                     </div>
-                                    <input id="last_name"  type="text" name="last_name"  className="form-control" placeholder="Last Name"  value={last_name} onChange={this.changeHandler}/>
+                                    <input id="lastName"  type="text" name="lastName"  className="form-control" placeholder="Last Name"  value={lastName} onChange={this.changeHandler}/>
                                 </div>
                                 <div className="input-group mb-3">
                                     <div className="input-group-append">
@@ -221,7 +251,7 @@ export default class Users extends Component {
                                         <span className="fas fa-user" />
                                     </div>
                                     </div>
-                                    <input id="username"  type="text" name="username"  className="form-control" placeholder="Username"  value={username} onChange={this.changeHandler}/>
+                                    <input id="userName"  type="text" name="userName"  className="form-control" placeholder="userName"  value={userName} onChange={this.changeHandler}/>
                                 </div>
                             <div className="input-group mb-3">
                                 <div className="input-group-append">
@@ -239,13 +269,7 @@ export default class Users extends Component {
                                 </div>
                                 <input id="password"  type="password" name="password"  className="form-control" placeholder="Password"  value={password} onChange={this.changeHandler}/>
                             </div>
-                            <div className="input-group mb-3">
-                                <div className="input-group-append">
-                                <div className="input-group-text">
-                                    <span className="fas fa-lock" />
-                                </div>
-                                </div>
-                            </div>
+                            
                             <br></br>
                             <div className="row">
                                 {/* /.col */}
@@ -268,40 +292,62 @@ export default class Users extends Component {
                         <table id="example1" className="table table-bordered table-striped">
                             <thead>
                             <tr>
+                                <th id="th3">TYPE</th>
                                 <th id="th1">USERNAME</th>
                                 <th id="th2">EMAIL</th>
-                                <th id="th3">TYPE</th>
                                 <th id="th4">FIRST NAME</th>
                                 <th id="th5">LAST NAME</th>
+                                <th id="th5">DELITE</th>
+
                             </tr>
                             </thead>
-                           
                             <tbody>
                             {
                                 users_list.length ? 
-                                users_list.map(post =>  { return post.user_type==="Moderator" ? 
-                                    <tr key={post.id}>
-                                        <td>{post.username}</td>
+                                users_list.map(post =>  { return post.userType==="Moderator" ? 
+                                    <tr key={post.idUser}>
+                                        <td>
+                                            <i className='fas fa-user-secret m-r-15'></i>
+                                            <i className='bg-danger'>Moderator</i>
+                                        </td>
+                                        <td>{post.userName}</td>
                                         <td>{post.email}</td>
-                                        <td><i className='fas fa-user-secret m-r-15'></i><i className='bg-danger'>Moderator</i></td>
-                                        <td>{post.first_name}</td>
-                                        <td>{post.last_name}</td>
+                                        <td>{post.firstName}</td>
+                                        <td>{post.lastName}</td>
+                                        <td>
+                                            <button type="button" className="btn btn-sm" style={deleteButtonStyle} onClick={() =>{ if (window.confirm('Are you sure you wish to delete this User?')) this.onClickDeleteUser(post.userName) } }> Delete </button>
+
+                                        </td>
                                     </tr> 
-                                : post.user_type==="HealthAgent"? 
+                                : post.userType==="HealthAgent"? 
                                     <tr key={post.id}>
-                                        <td>{post.username}</td>
+                                        <td>
+                                            <i className='fas fa-user-md m-r-15'></i>
+                                            <i className='bg-success'>Health Agent</i>
+                                        </td>
+                                        <td>{post.userName}</td>
                                         <td>{post.email}</td>
-                                        <td><i className='fas fa-user-md m-r-15'></i><i className='bg-success'>Health Agent</i></td>
-                                        <td>{post.first_name}</td>
-                                        <td>{post.last_name}</td>
+                                        <td>{post.firstName}</td>
+                                        <td>{post.lastName}</td>
+                                        <td>
+                                            <button type="button" className="btn btn-sm" style={deleteButtonStyle} onClick={() =>{ if (window.confirm('Are you sure you wish to delete this User?')) this.onClickDeleteUser(post.userName) } }> Delete </button>
+
+                                        </td>
                                     </tr> 
-                                : post.user_type==="Redactor"? 
+                                : post.userType==="Redactor"? 
                                 <tr key={post.id}>
-                                    <td>{post.username}</td>
+                                    <td>
+                                        <i className='fas fa-user-edit m-r-15'></i>
+                                        <i className='bg-primary'>Redactor</i>
+                                    </td>
+                                    <td>{post.userName}</td>
                                     <td>{post.email}</td>
-                                    <td><i className='fas fa-user-edit m-r-15'></i><i className='bg-primary'>Redactor</i></td>
-                                    <td>{post.first_name}</td>
-                                    <td>{post.last_name}</td>
+                                    <td>{post.firstName}</td>
+                                    <td>{post.lastName}</td>
+                                    <td>
+                                            <button type="button" className="btn btn-sm" style={deleteButtonStyle} onClick={() =>{ if (window.confirm('Are you sure you wish to delete this User?')) this.onClickDeleteUser(post.userName) } }> Delete </button>
+
+                                    </td>
                                 </tr> 
                                 
                                 :null}

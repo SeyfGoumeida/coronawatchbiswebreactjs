@@ -10,41 +10,31 @@ import Home from '../Home';
 export default class App extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
+        //const token = localStorage.getItem("login")
+        const userType =localStorage.getItem("userType")
 
         
         let loggedIn =true
         // if(token==null){
         //     loggedIn = false
         // }
-        let type = ''
-        if(user_type==='Moderator'){
-           type='Moderator'
-        }
-        if(user_type==='Redactor'){
-            type='Redactor'
-         }
-    
-         if(user_type==='HealthAgent'){
-            type='HealthAgent'
-         }
+      
         this.state = {
              loggedIn,
-             type
+             userType
         }
     }
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
         }
-        if(this.state.type ==='Moderator'){
+        if(this.state.userType ==='Moderator'){
             return <Redirect to="/moderator_dashboard"/>
         }
-        if(this.state.type ==='HealthAgent'){
+        if(this.state.userType ==='HealthAgent'){
             return <Redirect to="/halthAgent_dashboard"/>
         }
-        if(this.state.type ==='Redactor'){
+        if(this.state.userType ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
         return (

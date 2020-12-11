@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 
-const API_URL = 'https://coronawatch.herokuapp.com/api/geo';
+const API_URL = 'http://localhost:8080';
 
 //Styles
 const bodyStyle={
