@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
@@ -21,23 +21,21 @@ export default class Home extends Component {
              nb_recovered__sum:'',
              nb_suspected__sum:'',
              nb_confirmed__sum:'',
-             nb_notyetsick__sum:''
         }
 
     }
     componentDidMount(){
         //for get statistics total of word
-        let url = `${API_URL}/worldstats/`;
+        let url = `${API_URL}/Statistics/World`;
         axios.get(url)
         .then(response => {
             console.log(response)
             if (response.status === 200) {
-                this.setState({ nb_death__sum: response.data.nb_death__sum})
-                this.setState({ nb_recovered__sum: response.data.nb_recovered__sum})
-                this.setState({ nb_notyetsick__sum: response.data.nb_notyetsick__sum})
-                this.setState({ nb_suspected__sum: response.data.nb_suspected__sum})
-                this.setState({ nb_confirmed__sum: response.data.nb_confirmed__sum})
-                console.log("statistics total of word getted")
+                this.setState({ nb_death__sum: response.data.nbDeaths})
+                this.setState({ nb_recovered__sum: response.data.nbRecovred})
+                this.setState({ nb_suspected__sum: response.data.nbSuspected})
+                this.setState({ nb_confirmed__sum: response.data.nbConfirmed})
+                console.log("statistics total of world getted")
               }
         })
         .catch(error => {
