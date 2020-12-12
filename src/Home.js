@@ -10,7 +10,8 @@ const bodyStyle={
 };
 
 const whiteStyle={
-    color: 'white'
+    color: 'white',
+    textAlign: 'center'
 }; 
 
 export default class Home extends Component {
@@ -74,7 +75,7 @@ export default class Home extends Component {
                 </div>{/* /.container-fluid */}
                 </section>
                 {/* Main content */}
-                
+                <h1 style={whiteStyle} > Covid-19 around the world </h1>
                     <section className="content">
                 <div className="container-fluid">
                     <div className="row ">
@@ -83,7 +84,7 @@ export default class Home extends Component {
                         <div className="info-box">
                         <span className="info-box-icon bg-info"><i className="fas fa-chart-line" /></span>
                         <div className="info-box-content">
-                            <span id="span1" className="info-box-text">Infected</span>
+                            <span id="span1" className="info-box-text">Suspected</span>
                             <span className="info-box-number">{nb_suspected__sum}</span>
                         </div>
                         {/* /.info-box-content */}
@@ -112,8 +113,8 @@ export default class Home extends Component {
                         <div className="info-box">
                         <span className="info-box-icon bg-warning"><i className="fas fa-user-minus" /></span>
                         <div className="info-box-content">
-                            <span id="span3" className="info-box-text">Deceased</span>
-                            <span className="info-box-number">{nb_death__sum}</span>
+                            <span id="span3" className="info-box-text">Confirmed</span>
+                            <span className="info-box-number">{nb_confirmed__sum}</span>
                         </div>
                         {/* /.info-box-content */}
                         </div>
@@ -126,8 +127,8 @@ export default class Home extends Component {
                         <div className="info-box">
                         <span className="info-box-icon bg-danger"><i className="fas fa-user-times" /></span>
                         <div className="info-box-content">
-                            <span id="span4" className="info-box-text">Currently Sick</span>
-                            <span className="info-box-number">{nb_confirmed__sum}</span>
+                            <span id="span4" className="info-box-text"> Death  </span>
+                            <span className="info-box-number">{nb_death__sum }</span>
                         </div>
                         {/* /.info-box-content */}
                         </div>
