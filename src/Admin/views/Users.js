@@ -6,8 +6,8 @@ import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
-//const API_URL = 'http://localhost:8080';
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = 'http://localhost:8080';
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 
 //Styles
@@ -37,9 +37,12 @@ export default class Users extends Component {
  
     constructor(props) {
         super(props)
-   
+        const accessToken = localStorage.getItem("accessToken")
         let loggedIn =true
-       
+        if(accessToken==null){
+            loggedIn = false
+        }
+
         this.state = {
              loggedIn,
              users_list: [],
@@ -63,7 +66,7 @@ export default class Users extends Component {
     submitHandler = e =>{
         e.preventDefault()
         console.log(this.state)
-        //const token = localStorage.getItem("login")
+        const accessToken = localStorage.getItem("accessToken")
         // axios.defaults.headers = {
         //     "Content-Type" : "application/json",
         //     "Authorization": `Token ${token}`
@@ -102,7 +105,7 @@ export default class Users extends Component {
     //for deleting a USEr 
     onClickDeleteUser = (username) =>{
 
-        const token = localStorage.getItem("login")
+        const accessToken = localStorage.getItem("accessToken")
         let url = `${API_URL}/Users/DeleteUser?username=${username}`;
         axios.delete(url/*,{
         headers: {

@@ -10,14 +10,14 @@ import Home from '../Home';
 export default class App extends Component {
     constructor(props) {
         super(props)
-        //const token = localStorage.getItem("login")
-        const userType =localStorage.getItem("userType")
+        const accessToken = localStorage.getItem("accessToken")
+        const userType =localStorage.getItem("usertype")
 
         
         let loggedIn =true
-        // if(token==null){
-        //     loggedIn = false
-        // }
+        if(accessToken==null){
+             loggedIn = false
+        }
       
         this.state = {
              loggedIn,

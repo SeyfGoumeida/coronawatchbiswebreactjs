@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 
+//const API_URL = 'http://coronawatchbis.herokuapp.com';
+const API_URL = 'http://localhost:8080';
+
+
 //Styles
 const bodyStyle={
     backgroundColor:'#172B4D' 
@@ -19,7 +23,7 @@ const buttonStyle={
 export default class SignIn extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
+        const token = localStorage.getItem("accessToken")
        
 
         let loggedIn =true
@@ -31,7 +35,6 @@ export default class SignIn extends Component {
             username: '',
             password: '',
             loggedIn
-             
         }
         this.changeHandler =this.changeHandler.bind(this)
         this.submitHandler =this.submitHandler.bind(this)
@@ -45,13 +48,17 @@ export default class SignIn extends Component {
     submitHandler = e =>{
         e.preventDefault()
         console.log(this.state)
+        let url = `${API_URL}/signin`;
         axios
-            .post('https://coronawatch.herokuapp.com/api/users/login/', this.state)
+            .post(url, {
+                "username":this.state.username,
+                "password":this.state.password
+            })
             .then(response => {
                 console.log(response)
-                localStorage.setItem("login",response.data.token)
-                localStorage.setItem("user_id",response.data.id)
-                localStorage.setItem("user_type",response.data.user_type)
+                localStorage.setItem("accessToken",response.data.accessToken)
+                localStorage.setItem("id",response.data.id)
+                localStorage.setItem("usertype",response.data.usertype)
                 console.log(response.data)
                 if (response.status === 200) {
                     console.log ("User authenticated successfully");
@@ -68,22 +75,24 @@ export default class SignIn extends Component {
                 alert('password or email incorrect!');
 
             })
+            console.log(this.state)
+
 
     }
 
     render() {
-        const user_type = localStorage.getItem("user_type")
+        const user_type = localStorage.getItem("usertype")
 
-        if (user_type==='0'){
+        if (user_type==='SuperAdmin'){
             return <Redirect to="/admin_dashboard"/>
         }
-        if (user_type==='1'){
+        if (user_type==='Moderator'){
             return <Redirect to="/moderator_dashboard"/>
         }
-        if (user_type==='2'){
+        if (user_type==='HealthAgent'){
             return <Redirect to="/healthAgent_dashboard"/>
         }
-        if (user_type==='3'){
+        if (user_type==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
 
@@ -104,7 +113,7 @@ export default class SignIn extends Component {
                             <form onSubmit={this.submitHandler}>
                             <div id="input1" className="input-group mb-3">
                                 <input 
-                                    type="email" 
+                                    type="username" 
                                     name="username" 
                                     id="username" 
                                     className="form-control" 
