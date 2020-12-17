@@ -13,7 +13,7 @@ export default class Footer extends Component {
         return (
             <div>
                <footer className="main-footer" style={bodyStyle}>
-                <strong>Copyright © 2020-2021 <a href="SITE.COM" style={writeStyle}> Erifai_Goumeida</a>.</strong>
+                <strong>Copyright © 2020-2021 <a href="https://github.com/SeyfGoumeida/coronawatchbiswebreactjs" style={writeStyle}> Erifai & Goumeida</a>.</strong>
                 All rights reserved.
                 <div className="float-right d-none d-sm-inline-block">
                     <b>Version</b> 1.0.0

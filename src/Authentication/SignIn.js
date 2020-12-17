@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 
-//const API_URL = 'http://coronawatchbis.herokuapp.com';
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://coronawatchbis.herokuapp.com';
+//const API_URL = 'http://localhost:8080';
 
 
 //Styles
@@ -23,11 +23,11 @@ const buttonStyle={
 export default class SignIn extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("accessToken")
+        const accessToken = localStorage.getItem("accessToken")
        
 
         let loggedIn =true
-        if(token==null){
+        if(accessToken==null){
             loggedIn = false
         }
        

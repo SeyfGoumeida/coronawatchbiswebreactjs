@@ -15,8 +15,8 @@ const Recoverpassword= React.lazy(() => import('./Authentication/Recover_passwor
 const Admindashboard= React.lazy(() => import('./Admin/App'));
 const Users= React.lazy(() => import('./Admin/views/Users'));
 // //Redactor
-// const Redactordashboard= React.lazy(() => import('./Redactor/App'));
-// const Articles= React.lazy(() => import('./Redactor/views/Articles'));
+const Redactordashboard= React.lazy(() => import('./Redactor/App'));
+const Articles= React.lazy(() => import('./Redactor/views/Articles'));
 // //Moderator
 // const Moderatordashboard= React.lazy(() => import('./Moderator/App'));
 // const ModeratorArticles= React.lazy(() => import('./Moderator/views/Articles'));
@@ -52,9 +52,9 @@ class App extends Component {
             <Route exact path="/admin_dashboard/home" name="Admin_home" component={Admindashboard}/>
             <Route exact path="/admin_dashboard/users" name="Admin_users" component={ Users}/> 
             {/*Redactor*/}
-            {/* <Route exact path="/redactor_dashboard" name="Redactor_dashboard" component={Redactordashboard}/>
+            <Route exact path="/redactor_dashboard" name="Redactor_dashboard" component={Redactordashboard}/>
             <Route exact path="/redactor_dashboard/home" name="Redactor_home" component={Redactordashboard}/>
-            <Route exact path="/redactor_dashboard/articles" name="Redactor_articles" component={ Articles}/> */}
+            <Route exact path="/redactor_dashboard/articles" name="Redactor_articles" component={ Articles}/>
             {/*Moderator*/}
             {/* <Route exact path="/moderator_dashboard" name="Moderator_dashboard" component={Moderatordashboard}/>
             <Route exact path="/moderator_dashboard/home" name="Moderator_home" component={Moderatordashboard}/>
@@ -73,8 +73,8 @@ class App extends Component {
             <Route exact path="/healthAgent_dashboard/historic" name="Historic" component={HealthAgenthistoric}/>
              */}
             {/*General*/}
-            {/* <Route exact path="/" name="Home" component={Login}  />
-            <Route component={Login}/> */}
+            <Route exact path="/" name="Home" component={Login}  />
+            <Route component={Login}/> 
             </Switch>
           </React.Suspense>
       </Router>

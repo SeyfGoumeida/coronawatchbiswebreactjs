@@ -6,9 +6,9 @@ export default class Signout extends Component {
     constructor(props) {
         super(props)
 
-        localStorage.removeItem("login")
-        localStorage.removeItem("user_type")
-        localStorage.removeItem("user_id")
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("usertype")
+        localStorage.removeItem("id")
  
     }
     
