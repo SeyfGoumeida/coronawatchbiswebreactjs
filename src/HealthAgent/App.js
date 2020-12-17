@@ -6,11 +6,10 @@ import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 //var DatePicker = require("react-bootstrap-date-picker");
 import DatePicker from "react-datepicker";
- 
 import "react-datepicker/dist/react-datepicker.css";
 
-
-const API_URL = 'https://coronawatch.herokuapp.com/api/geo';
+const API_URL = 'http://localhost:8080';
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
@@ -31,32 +30,33 @@ const buttonStyle={
 export default class App extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
 
-        
+        const accessToken = localStorage.getItem("accessToken")
+
         let loggedIn =true
-        if(token==null){
+        if(accessToken==null){
             loggedIn = false
         }
-        let type = '2'
-        if(user_type==='0'){
-           type='0'
+
+        const userType =localStorage.getItem("usertype")
+        
+        let type = 'HealthAgent'
+        if(userType==='SuperAdmin'){
+           type='SuperAdmin'
         }
-        if(user_type==='1'){
-            type='1'
-         }
-    
-         if(user_type==='3'){
-            type='3'
-         }
+        if(userType==='Redactor'){
+            type='Redactor'
+        }
+        if(userType==='Moderator'){
+            type='Moderator'
+        }
         this.state = {
              loggedIn,
              type,
              country_list: [],
-             country_id : '',
+             idCountry : '',
              region_list: [],
-             region_id:'',
+             idRegion:'',
              nb_death:'',
              nb_recovered:'',
              nb_suspected:'',
@@ -94,12 +94,13 @@ export default class App extends Component {
       }*/
 
 
-    updateCountry_id = (event) => {
-        this.setState({country_id:event.target.value})
+      
+    updateidCountry = (event) => {
+        this.setState({idCountry:event.target.value})
     }
 
-    updateRegion_id = (event) => {
-        this.setState({region_id:event.target.value})
+    updateidRegion = (event) => {
+        this.setState({idRegion:event.target.value})
     }
 
     //for change the state from inputs value
@@ -107,53 +108,50 @@ export default class App extends Component {
         this.setState({[e.target.name]: e.target.value})
 
     }
-
-    //for get Country details 
-   onClickGetCountryDetail = (id) =>{
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------  GET COUNTRY REGIONS & COUNTRY STATISTICS     -----------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+    onClickGetCountryDetail = (id) =>{
 
     console.log(this.state)
-    const token = localStorage.getItem("login")
-    let url = `${API_URL}/country/${id}/`;
-    let url1 = `${API_URL}/country/${id}/stats/`;
+    //const accessToken = localStorage.getItem("accessToken")
+    let url = `${API_URL}/Regions/CountryRegionsById?idCountry=${id}`;
+    let url1 = `${API_URL}/Regions/CountryById?idCountry=${id}`;
     axios.all([
-    axios.get(url,{
+    axios.get(url/*,{
        headers: {
          'content-type': 'application/json',
          Authorization: `Token ${token}`
        }
-     }),
-     axios.get(url1,{
+     }*/),
+     axios.get(url1/*,{
        headers: {
          'content-type': 'application/json',
          Authorization: `Token ${token}`
        }
-     })
+     }*/)
    
    ])
-   .then(([response, response1]) => {
-       
-       console.log(response)
-       console.log(response1)
-               if (response.status === 200) {
-                   this.setState({ region_list: response.data.regions})
-                   console.log("List regions getted")
-                 }
-                 if (response1.status === 200) {
-                   this.setState({ nb_death: response1.data.nb_death__sum})
-                   this.setState({ nb_recovered: response1.data.nb_recovered__sum})
-                   this.setState({ nb_notyetsick: response1.data.nb_notyetsick__sum})
-                   this.setState({ nb_suspected: response1.data.nb_suspected__sum})
-                   this.setState({ nb_confirmed: response1.data.nb_confirmed__sum})
-                   console.log("Statistic total of country getted")
-                 }
-   })
-   
-   
-           .catch(([error, error1]) => {
+   .then(([response, response1]) => 
+   {
+        console.log(response)
+        console.log(response1)
+        if (response.status === 200) {
+            this.setState({ region_list: response.data})
+            console.log("List regions getted")
+        }
+        if (response1.status === 200) {
+            this.setState({ nb_death: response1.data.countryStatistics.nbDeaths})
+            this.setState({ nb_recovered: response1.data.countryStatistics.nbRecovered})
+            this.setState({ nb_suspected: response1.data.countryStatistics.nbSuspected})
+            this.setState({ nb_confirmed: response1.data.countryStatistics.nbConfirmed})
+            console.log("Statistic total of country getted")
+        }
+    })
+    .catch(([error, error1]) => {
                console.log("get list region error"+error.message)
                console.log(error)
-                 
-
+                
                console.log("get Statistic total of country error"+error1.message)
                console.log(error1)
                console.log("status1===",error1.response.status)
@@ -162,28 +160,27 @@ export default class App extends Component {
    }
 
 
-//for get Region epidemic history
-onClickGetHistoric = (id) =>{
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------          GET REGIONS  STATISTICS              -----------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+onClickGetRegionStatistics = (id) =>{
 
     console.log(this.state)
-    const token = localStorage.getItem("login")
- let url = `${API_URL}/infectedregion/get-history/${id}/`;
- axios.get(url,{
+    //const token = localStorage.getItem("login")
+    let url = `${API_URL}/Regions/RegionById?id=${id}`;
+ axios.get(url/*,{
     headers: {
       'content-type': 'application/json',
       Authorization: `Token ${token}`
     }
-  })
+  }*/)
         .then(response => {
             console.log(response)
             if (response.status === 200) {
-                this.setState({ history: response.data.history})
-                this.setState({ riskregion: response.data.riskregion})
-                this.setState({ nb_death: this.state.history[0].nb_death})
-                this.setState({ nb_recovered: this.state.history[0].nb_recovered})
-                this.setState({ nb_notyetsick: this.state.history[0].nb_notyetsick})
-                this.setState({ nb_suspected: this.state.history[0].nb_suspected})
-                this.setState({ nb_confirmed: this.state.history[0].nb_confirmed})
+                this.setState({ nb_death: response.data.regionStatistics.nbDeaths})
+                this.setState({ nb_recovered: response.data.regionStatistics.nbRecovered})
+                this.setState({ nb_suspected: response.data.regionStatistics.nbSuspected})
+                this.setState({ nb_confirmed: response.data.regionStatistics.nbConfirmed})
                 console.log("Region detail getted")
               }
         })
@@ -259,50 +256,48 @@ onClickDeclareRiskRegion = (id) =>{
 submitHandler = e =>{
     e.preventDefault();
     console.log(this.state)
-    const token = localStorage.getItem("login")
-    let form_data = new FormData();
+   // const token = localStorage.getItem("login")
+        let url = `${API_URL}/Regions/Statistics?id=${this.state.idRegion}`;
+        axios.post(url, {
+            "nbDeaths": this.state.nb_death,
+            "nbRecovered": this.state.nb_recovered,
+            "nbSuspected": this.state.nb_suspected,
+            "nbConfirmed": this.state.nb_confirmed
+        }/*, {
+        headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+        }*/)
+        .then(response => {
+                    console.log(response)
+                    console.log(response.data)
+                    if (response.status === 200) {
+                        console.log ("New values added successfully");
+                        
+                    alert('New values added successfully');
+                        window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    console.log(error)
+                    
+                })
 
- form_data.append('nb_death', this.state.nb_death);
- form_data.append('nb_recovered', this.state.nb_recovered);
- form_data.append('nb_notyetsick', this.state.nb_notyetsick);
- form_data.append('nb_suspected', this.state.nb_suspected);
- form_data.append('nb_confirmed', this.state.nb_confirmed);
- form_data.append('regionid', this.state.region_id);
- let url = `${API_URL}/infectedregion/`;
- axios.post(url, form_data, {
-   headers: {
-     'content-type': 'application/json',
-     Authorization: `Token ${token}`
-   }
- })
- .then(response => {
-            console.log(response)
-            console.log(response.data)
-            if (response.status === 201) {
-                console.log ("New values added successfully");
-                
-             alert('New values added successfully');
-                 window.location.reload();
-              }
-        })
-        .catch(error => {
-            console.log(error.message)
-            console.log(error)
-              
-        })
-
-}
-
+ }
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------            GET LIST OF COUNTRIES            -------------------------------------
+//--------------------------------------------------------------------------------------------------------------------
     componentDidMount(){
-        //for get the list of Contries
-        const token = localStorage.getItem("login")
-        let url = `${API_URL}/country/`;
-        axios.get(url, {
+        //const token = localStorage.getItem("login")
+        let url = `${API_URL}/Regions/Countries`;
+        axios.get(url/*, {
             headers: {
               'content-type': 'application/json',
               Authorization: `Token ${token}`
             }
-          })
+          }*/)
         .then(response => {
             console.log(response)
             this.setState({ country_list: response.data})
@@ -316,27 +311,25 @@ submitHandler = e =>{
               
         })
 
-        //js
-        /*const script =document.createElement("script");
-        script.type = "text/javascript";
-        script.src='../js/select.js';
-        script.async=true;
-        document.body.appendChild(script);*/
     }
+
+    //--------------------------------------------------------------------------------------------------------------------
+    //----------------------------------                 Render           ------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
         }
-        if(this.state.type ==='0'){
+        if(this.state.type ==='SuperAdmin'){
             return <Redirect to="/admin_dashboard"/>
         }
-        if(this.state.type ==='1'){
+        if(this.state.type ==='Moderarator'){
             return <Redirect to="/moderator_dashboard"/>
         }
-        if(this.state.type ==='3'){
+        if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
-        const {country_list,country_id,region_list,region_id,nb_notyetsick,nb_death,nb_recovered,
+        const {country_list,idCountry,region_list,idRegion,nb_death,nb_recovered,
             nb_suspected,nb_confirmed,riskregion}= this.state
         return (
             <div>
@@ -374,19 +367,19 @@ submitHandler = e =>{
                     
                         <div className="row">
                     <div className="input-group mb-3 col-sm-6 col-12">
-                     <select className="form-control" name="country_id" 
-                            value={country_id} onChange={this.updateCountry_id.bind(this)}   style={{borderColor:'#009F95'}}> 
-                                   <option>Chose a Country ...</option>
+                     <select className="form-control" name="idCountry" 
+                            value={idCountry} onChange={this.updateidCountry.bind(this)}   style={{borderColor:'#009F95'}}> 
+                                   <option>Choose a Country ...</option>
                                     {
                                       country_list.length ? 
                                       country_list.map(count =>  
-                                    <option value={count.id} key={count.id}>{count.name}</option>
+                                    <option value={count.idCountry} key={count.idCountry}>{count.countryName}</option>
                                     ): null}
                     </select>
                                  
                      </div>
                      <div className="input-group mb-3 col-sm-6 col-12">
-                     <button id="search1" type="button"  onClick={() =>{if (country_id !=='')  this.onClickGetCountryDetail(country_id) } }
+                     <button id="search1" type="button"  onClick={() =>{if (idCountry !=='')  this.onClickGetCountryDetail(idCountry) } }
                      className="btn-sm  btn-outline-light"  style={buttonStyle}>
                                     Search Country Details</button>
                     
@@ -396,26 +389,26 @@ submitHandler = e =>{
                      
                      <div className="row">
                      <div className="input-group mb-3 col-sm-6 col-12">
-                     <select className="form-control" name="region_id" 
-                            value={region_id} onChange={this.updateRegion_id.bind(this)}   style={{borderColor:'#009F95'}}> 
+                     <select className="form-control" name="idRegion" 
+                            value={idRegion} onChange={this.updateidRegion.bind(this)}   style={{borderColor:'#009F95'}}> 
                                    <option>Chose a Region ...</option>
                                     {
                                       region_list.length ? 
                                       region_list.map(reg =>  
-                                    <option value={reg.id} key={reg.id}>{reg.region_name}</option>
+                                    <option value={reg.idRegion} key={reg.idRegion}>{reg.regionName}</option>
                                     ): null}
                     </select>
                     
                      </div>
                      <div className="input-group mb-3 col-sm-6 col-12">
-                     <button id="search2" type="button" onClick={() =>{if (region_id !=='') this.onClickGetHistoric(region_id)}} className="btn-sm  btn-outline-light"  style={buttonStyle}>
+                     <button id="search2" type="button" onClick={() =>{if (idRegion !=='') this.onClickGetRegionStatistics(idRegion)}} className="btn-sm  btn-outline-light"  style={buttonStyle}>
                                      Search Region Details</button>
                                      &nbsp; &nbsp;  
 
                     {(riskregion===true) ? 
-                                    <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareRiskRegion(region_id) } } >Undeclare It As Risk Region</button>
+                                    <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareRiskRegion(idRegion) } } >Undeclare It As Risk Region</button>
                                 :(riskregion===false) ? 
-                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareRiskRegion(region_id) } }   >Declare It As Risk Region</button>
+                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareRiskRegion(idRegion) } }   >Declare It As Risk Region</button>
                                      :null}          
                      
                      </div>
@@ -452,8 +445,8 @@ submitHandler = e =>{
                         <div className="info-box">
                         <span className="info-box-icon bg-warning"><i className="fas fa-user-minus" /></span>
                         <div className="info-box-content">
-                            <span id="span3" className="info-box-text">Deceased</span>
-                            <span className="info-box-number">{nb_death}</span>
+                            <span id="span3" className="info-box-text">Confirmed </span>
+                            <span className="info-box-number">{nb_confirmed}</span>
                         </div>
                         {/* /.info-box-content */}
                         </div>
@@ -465,8 +458,8 @@ submitHandler = e =>{
                         <div className="info-box">
                         <span className="info-box-icon bg-danger"><i className="fas fa-user-times" /></span>
                         <div className="info-box-content">
-                            <span id="span4" className="info-box-text">Currently Sick</span>
-                            <span className="info-box-number">{nb_confirmed}</span>
+                            <span id="span4" className="info-box-text">Deceased</span>
+                            <span className="info-box-number">{nb_death}</span>
                         </div>
                         {/* /.info-box-content */}
                         </div>
@@ -576,18 +569,7 @@ submitHandler = e =>{
                                         </div>
                                     </div>
                                     {/* END timeline item */}
-                                    <div>
-                                        <i className="fas bg-gray"></i>
-                                        <div className="timeline-item">
-                                        <h3 className="timeline-header">INFECTED BUT NOT YET SICK</h3>
-                                        <div className="timeline-body">
-                                        <div className="input-group mb-3">  
-                                            <input  id="nb_notyetsick" type="text" name="nb_notyetsick" value={nb_notyetsick} onChange={this.changeHandler} className="form-control" placeholder="Not Yet Sick..."/>
-                                        </div>
-                                        </div>
-                                        </div>
-                                    </div>   
-                                    
+                                
                                     </div>
                                    
                                 </div>

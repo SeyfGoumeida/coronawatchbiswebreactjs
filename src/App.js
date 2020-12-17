@@ -31,8 +31,8 @@ const Articles= React.lazy(() => import('./Redactor/views/Articles'));
 // const LogFile= React.lazy(() => import('./Moderator/views/Log_file'));
 
 // //Health Agent
-// const HealthAgentdashboard= React.lazy(() => import('./HealthAgent/App'));
-// const HealthAgenthistoric= React.lazy(() => import('./HealthAgent/views/Historic'));
+const HealthAgentdashboard= React.lazy(() => import('./HealthAgent/App'));
+const HealthAgenthistoric= React.lazy(() => import('./HealthAgent/views/Historic'));
 
 class App extends Component {
 
@@ -69,9 +69,9 @@ class App extends Component {
             <Route exact path="/moderator_dashboard/client_videos" name="Moderator_client_videos" component={ClientVideos}/>
             <Route exact path="/moderator_dashboard/log_file" name="Moderator_log_file" component={LogFile}/> */}
             {/*Health Agent*/}
-            {/* <Route exact path="/healthAgent_dashboard" name="HealthAgent_dashboard" component={HealthAgentdashboard}/>
+            <Route exact path="/healthAgent_dashboard" name="HealthAgent_dashboard" component={HealthAgentdashboard}/>
             <Route exact path="/healthAgent_dashboard/historic" name="Historic" component={HealthAgenthistoric}/>
-             */}
+  
             {/*General*/}
             <Route exact path="/" name="Home" component={Login}  />
             <Route component={Login}/> 
