@@ -5,8 +5,8 @@ import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080';
-//const API_URL = 'https://coronawatchbis.herokuapp.com';
+//const API_URL = 'http://localhost:8080';
+const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={

@@ -8,8 +8,8 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const API_URL = 'http://localhost:8080';
-//const API_URL = 'https://coronawatchbis.herokuapp.com';
+//const API_URL = 'http://localhost:8080';
+const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={

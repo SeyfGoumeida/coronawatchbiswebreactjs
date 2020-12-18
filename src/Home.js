@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 
 
-//const API_URL = 'http://coronawatchbis.herokuapp.com';
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://coronawatchbis.herokuapp.com';
+//const API_URL = 'http://localhost:8080';
 
 //Styles
 const bodyStyle={
