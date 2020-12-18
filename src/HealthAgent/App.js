@@ -62,14 +62,14 @@ export default class App extends Component {
              nb_suspected:'',
              nb_confirmed:'',
              nb_notyetsick:'',
-             riskregion:'',
+             regionRisk:'',
              startDate: new Date()
         }
         this.changeHandler =this.changeHandler.bind(this)
         this.onClickGetCountryDetail =this.onClickGetCountryDetail.bind(this)
         this.submitHandler =this.submitHandler.bind(this)
-        this.onClickDeclareRiskRegion =this.onClickDeclareRiskRegion.bind(this)
-        this.onClickUndeclareRiskRegion =this.onClickUndeclareRiskRegion.bind(this)
+        this.onClickDeclareregionRisk =this.onClickDeclareregionRisk.bind(this)
+        this.onClickUndeclareregionRisk =this.onClickUndeclareregionRisk.bind(this)
     }
 
     //for date picker
@@ -80,21 +80,7 @@ export default class App extends Component {
         });
       };
 
-    /*getInitialState = () =>{
-        var value = new Date().toISOString();
-        return {
-          value: value
-        }
-      }
-    handleChange= (value, formattedValue) =>{
-        this.setState({
-          value: value, // ISO String, ex: "2016-11-19T12:00:00.000Z"
-          formattedValue: formattedValue // Formatted String, ex: "11/19/2016"
-        });
-      }*/
 
-
-      
     updateidCountry = (event) => {
         this.setState({idCountry:event.target.value})
     }
@@ -181,6 +167,7 @@ onClickGetRegionStatistics = (id) =>{
                 this.setState({ nb_recovered: response.data.regionStatistics.nbRecovered})
                 this.setState({ nb_suspected: response.data.regionStatistics.nbSuspected})
                 this.setState({ nb_confirmed: response.data.regionStatistics.nbConfirmed})
+                this.setState({ regionRisk: response.data.regionRisk})
                 console.log("Region detail getted")
               }
         })
@@ -192,19 +179,20 @@ onClickGetRegionStatistics = (id) =>{
         })
 
 }
-
-// for declare this region as a risk region
-onClickDeclareRiskRegion = (id) =>{
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------            Declare Region Risk                -----------------------------------
+//--------------------------------------------------------------------------------------------------------------------
+onClickDeclareregionRisk = (id) =>{
 
     console.log(this.state)
     const token = localStorage.getItem("login")
- let url = `${API_URL}/region/${id}/risk/`;
- axios.patch(url,'',{
+    let url = `${API_URL}/Regions/Risk?id=${id}&risk=true`;
+    axios.post(url/*,'',{
    headers: {
      'content-type': 'application/json',
      Authorization: `Token ${token}`
    }
- })
+ }*/)
  .then(response => {
             console.log(response)
             console.log(response.data)
@@ -222,18 +210,20 @@ onClickDeclareRiskRegion = (id) =>{
         })
 
 }
-  // for undeclare this region as a risk region
-  onClickUndeclareRiskRegion = (id) =>{
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------            Undeclare Region Risk                ---------------------------------
+//--------------------------------------------------------------------------------------------------------------------  
+onClickUndeclareregionRisk = (id) =>{
 
     console.log(this.state)
     const token = localStorage.getItem("login")
- let url = `${API_URL}/region/${id}/inrisk/`;
- axios.patch(url,'',{
+ let url = `${API_URL}/Regions/Risk?id=${id}&risk=false`;
+ axios.post(url/*,'',{
    headers: {
      'content-type': 'application/json',
      Authorization: `Token ${token}`
    }
- })
+ }*/)
  .then(response => {
             console.log(response)
             console.log(response.data)
@@ -252,7 +242,9 @@ onClickDeclareRiskRegion = (id) =>{
 
 }
 
-//for add infected region
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------            Edit Statistics                    -----------------------------------
+//--------------------------------------------------------------------------------------------------------------------
 submitHandler = e =>{
     e.preventDefault();
     console.log(this.state)
@@ -330,7 +322,7 @@ submitHandler = e =>{
             return <Redirect to="/redactor_dashboard"/>
         }
         const {country_list,idCountry,region_list,idRegion,nb_death,nb_recovered,
-            nb_suspected,nb_confirmed,riskregion}= this.state
+            nb_suspected,nb_confirmed,regionRisk}= this.state
         return (
             <div>
                 <Header/>
@@ -405,10 +397,10 @@ submitHandler = e =>{
                                      Search Region Details</button>
                                      &nbsp; &nbsp;  
 
-                    {(riskregion===true) ? 
-                                    <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareRiskRegion(idRegion) } } >Undeclare It As Risk Region</button>
-                                :(riskregion===false) ? 
-                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareRiskRegion(idRegion) } }   >Declare It As Risk Region</button>
+                    {(regionRisk===true) ? 
+                                    <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareregionRisk(idRegion) } } >Undeclare It As Risk Region</button>
+                                :(regionRisk===false) ? 
+                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareregionRisk(idRegion) } }   >Declare It As Risk Region</button>
                                      :null}          
                      
                      </div>

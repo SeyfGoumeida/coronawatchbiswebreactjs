@@ -34,7 +34,7 @@ export default class Home extends Component {
             console.log(response)
             if (response.status === 200) {
                 this.setState({ nb_death__sum: response.data.nbDeaths})
-                this.setState({ nb_recovered__sum: response.data.nbRecovred})
+                this.setState({ nb_recovered__sum: response.data.nbRecovered})
                 this.setState({ nb_suspected__sum: response.data.nbSuspected})
                 this.setState({ nb_confirmed__sum: response.data.nbConfirmed})
                 console.log("statistics total of world getted")
