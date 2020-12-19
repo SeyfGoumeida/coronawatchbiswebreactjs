@@ -185,7 +185,7 @@ onClickGetRegionStatistics = (id) =>{
 onClickDeclareregionRisk = (id) =>{
 
     console.log(this.state)
-    const token = localStorage.getItem("login")
+    //const token = localStorage.getItem("login")
     let url = `${API_URL}/Regions/Risk?id=${id}&risk=true`;
     axios.post(url/*,'',{
    headers: {
@@ -216,7 +216,7 @@ onClickDeclareregionRisk = (id) =>{
 onClickUndeclareregionRisk = (id) =>{
 
     console.log(this.state)
-    const token = localStorage.getItem("login")
+    //const token = localStorage.getItem("login")
  let url = `${API_URL}/Regions/Risk?id=${id}&risk=false`;
  axios.post(url/*,'',{
    headers: {

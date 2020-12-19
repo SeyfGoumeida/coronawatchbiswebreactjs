@@ -48,13 +48,7 @@ export default class Menu extends Component {
                         <p id="nav-item2" style={blueStyle}>Articles</p>
                         </a>
                     </li>
-                    <li className="nav-item">
-                        <a href="/moderator_dashboard/robots" className="nav-link">
-                        <i className="nav-icon fas fa-cogs" style={{color:'#00cc00'}} />
-                        <p id="nav-item3" style={blueStyle}>Robots</p>
-                        </a>
-                    </li>
-
+                
                     <li className="nav-item">
                         <a href="/moderator_dashboard/inbox" className="nav-link">
                         <i className="nav-icon far fa-envelope" style={{color:'#ff0000'}} />
@@ -71,19 +65,6 @@ export default class Menu extends Component {
                         <a href="/moderator_dashboard/riskZones" className="nav-link">
                         <i className="nav-icon fas fa-skull-crossbones" style={{color:'#990000'}} />
                         <p id="nav-item6" style={blueStyle}>Risk zones</p>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a href="/moderator_dashboard/client_videos" className="nav-link">
-                        <i className="nav-icon fas fa-video" style={{color:' #ffcc00'}} />
-                        <p id="nav-item7" style={blueStyle}>Client videos</p>
-                        </a>
-                    </li>
-                    
-                    <li className="nav-item">
-                        <a href="/moderator_dashboard/log_file" className="nav-link">
-                        <i className="nav-icon far fa-folder-open" style={{color:'#00004d'}} />
-                        <p id="nav-item8" style={blueStyle}>Log file</p>
                         </a>
                     </li>
                     </ul>

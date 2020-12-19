@@ -4,7 +4,6 @@ import Menu from '../Menu';
 import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
-import { Player } from 'video-react';
 import "../../../node_modules/video-react/dist/video-react.css";
 
 const API_URL = 'http://localhost:8080';
@@ -182,7 +181,7 @@ onClickValidate = (id) =>{
     //--------------------------------------------------------------------------------------------------------------------
     onClickInappropriateComment = (idarticle,idcomment) =>{
 
-    const token = localStorage.getItem("login")
+    //const token = localStorage.getItem("login")
     let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=true`;
     axios.put(url/*,{
     headers: {
@@ -212,7 +211,7 @@ onClickValidate = (id) =>{
     //--------------------------------------------------------------------------------------------------------------------
     onClickappropriateComment = (idarticle,idcomment) =>{
 
-        const token = localStorage.getItem("login")
+        //const token = localStorage.getItem("login")
         let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=false`;
         axios.put(url/*,{
         headers: {

@@ -6,8 +6,8 @@ import Footer from '../../Footer';
 import axios from 'axios';
 
 
-const API_URL = 'https://coronawatch.herokuapp.com/api/geo';
-
+const API_URL = 'http://localhost:8080';
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
@@ -35,29 +35,30 @@ const greenButton={
 export default class HealthAgent_statistics extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
+        const accessToken = localStorage.getItem("accessToken")
 
-        
         let loggedIn =true
-        if(token==null){
+        if(accessToken==null){
             loggedIn = false
         }
-        let type = '1'
-        if(user_type==='0'){
-           type='0'
+
+        const userType =localStorage.getItem("usertype")
+        
+        let type = 'Moderator'
+        if(userType==='SuperAdmin'){
+           type='SuperAdmin'
         }
-        if(user_type==='2'){
-            type='2'
+        if(userType==='HealthAgent'){
+            type='HealthAgent'
          }
     
-         if(user_type==='3'){
-            type='3'
+         if(userType==='Redactor'){
+            type='Redactor'
          }
         this.state = {
              loggedIn,
              type,
-             history:[]
+             stats:[]
         }
         this.onClickValidate =this.onClickValidate.bind(this)
         this.onClickInvalidate =this.onClickInvalidate.bind(this)
@@ -67,14 +68,14 @@ export default class HealthAgent_statistics extends Component {
     onClickValidate = (id) =>{
 
         console.log(this.state)
-        const token = localStorage.getItem("login")
-     let url = `${API_URL}/infectedregion/${id}/validate/`;
-     axios.patch(url,'',{
+        //const token = localStorage.getItem("login")
+     let url = `${API_URL}/Statistics/Region/Validate?id=${id}&validate=true`;
+     axios.put(url/*,'',{
        headers: {
          'content-type': 'application/json',
          Authorization: `Token ${token}`
        }
-     })
+     }*/)
      .then(response => {
                 console.log(response)
                 console.log(response.data)
@@ -97,14 +98,14 @@ export default class HealthAgent_statistics extends Component {
     onClickInvalidate = (id) =>{
 
         console.log(this.state)
-        const token = localStorage.getItem("login")
-     let url = `${API_URL}/infectedregion/${id}/invalidate/`;
-     axios.patch(url,'',{
+        //const token = localStorage.getItem("login")
+        let url = `${API_URL}/Statistics/Region/Validate?id=${id}&validate=false`;
+        axios.put(url/*,'',{
        headers: {
          'content-type': 'application/json',
          Authorization: `Token ${token}`
        }
-     })
+     }*/)
      .then(response => {
                 console.log(response)
                 console.log(response.data)
@@ -122,56 +123,62 @@ export default class HealthAgent_statistics extends Component {
             })
  
     }
-
+   
     componentDidMount(){
-
+        
         console.log(this.state)
-        const token = localStorage.getItem("login")
-     let url = `${API_URL}/infectedregion/get-history/`;
-     axios.get(url,{
-        headers: {
-          'content-type': 'application/json',
-          Authorization: `Token ${token}`
-        }
-      })
+        //const token = localStorage.getItem("login")
+        let url = `${API_URL}/Statistics/Regions`;
+        axios.get(url/*,{
+            headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+            }
+        }*/)
             .then(response => {
                 console.log(response)
                 if (response.status === 200) {
-                    this.setState({ history: response.data})
+                    this.setState({ stats: response.data})
                     console.log("Statistic getted")
-                  }
+                }
             })
     
             .catch(error => {
                 console.log(error.message)
                 console.log(error)
-                  
+                
             })
-    
+        
 
-        //js
-        const script =document.createElement("script");
-        script.src='../js/DataTable.js';
-        script.async=true;
-        document.body.appendChild(script);
+            //js
+            const script =document.createElement("script");
+            script.src='../js/DataTable.js';
+            script.async=true;
+            document.body.appendChild(script);
 
+    }
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
     }
 
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
         }
-        if(this.state.type ==='0'){
+        if(this.state.type ==='SuperAdmin'){
             return <Redirect to="/admin_dashboard"/>
         }
-        if(this.state.type ==='2'){
+        if(this.state.type ==='HealthAgent'){
             return <Redirect to="/halthAgent_dashboard"/>
         }
-        if(this.state.type ==='3'){
+        if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
 
-        const {history}= this.state
+        const {stats}= this.state
         return (
             <div>
 
@@ -211,7 +218,7 @@ export default class HealthAgent_statistics extends Component {
                     <thead>
                         <tr>
                         <th id="th1">Username</th>
-                        <th id="th2">Date</th>
+                        <th id="th2">Region Name</th>
                         <th id="th3">Place</th>
                         <th id="th4">State</th>
                         <th id="th5">More</th>
@@ -219,38 +226,38 @@ export default class HealthAgent_statistics extends Component {
                     </thead>
                     <tbody>
                     {
-                                history.length ? 
-                                history.map(hist => 
-                        <tr key={hist.id}>
+                                stats.length ? 
+                                stats.map(stat => 
+                        <tr key={stat.idStatistics}>
                         <td>
                             <img src="../dist/img/avatar04.png" alt="Product 1" className="img-circle img-size-32 mr-2" />
-                            User {hist.agentid}
+                            User {stat.agentid}
                         </td>
-                        <td>{hist.date}</td>
-                                <td>{hist.region.country_detail.name}-{hist.region.region_name}</td>
+                        <td>{stat.statisticsRegionName}</td>
+                        {/*<td>{stat.region.country_detail.name}-{stat.region.region_name}</td>*/}
                         <td>
-                        {(hist.valide===true) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this statistic?')) this.onClickInvalidate(hist.id) } }  style={validatedButton}>VALIDATED</button>
-                          :(hist.valide===false) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this statistic?')) this.onClickValidate(hist.id) } } style={greenButton}  >VALIDATE</button>
+                        {(stat.statisticsValidate===true) ? 
+                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this statistic?')) this.onClickInvalidate(stat.idStatistics) } }  style={validatedButton}>VALIDATED</button>
+                          :(stat.statisticsValidate===false) ? 
+                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this statistic?')) this.onClickValidate(stat.idStatistics) } } style={greenButton} >VALIDATE</button>
                           :null}
 
                         </td>
                         <td>
-                        <button type="button" className="btn"  data-toggle="modal" data-target={"#exampleModal" + hist.id}  style={blueStyle}>
+                        <button type="button" className="btn"  data-toggle="modal" data-target={"#exampleModal" + stat.idStatistics}  style={blueStyle}>
                         <i className="fas fa-search" />
                         </button>
                                     
                      {/*<!-- Modal -->*/}
-                     <div className="modal fade" id={"exampleModal" + hist.id} tabIndex="-1" role="dialog" aria-labelledby={"exampleModalLabel"+hist.id} aria-hidden="true" >
+                     <div className="modal fade" id={"exampleModal" + stat.idStatistics} tabIndex="-1" role="dialog" aria-labelledby={"exampleModalLabel"+stat.idStatistics} aria-hidden="true" >
                             <div className="modal-dialog" role="document">
                                 <div className="modal-content">
                                 <div className="modal-header">
                                 <div className="user-block">
-                                <h5 className="modal-title" id={"exampleModalLabel"+hist.id}  style={blueStyle}>
-                                         <b>{hist.region.country_detail.name}-{hist.region.region_name}</b>
+                                <h5 className="modal-title" id={"exampleModalLabel"+stat.idStatistics}  style={blueStyle}>
+                                        {/* <b>{stat.region.country_detail.name}-{stat.region.region_name}</b>*/}
                                          </h5>
-                                            <span style={{color:'gray', fontSize:'13px'}} > {hist.date}</span>
+                                            <span style={{color:'gray', fontSize:'13px'}} > {stat.date}</span>
                                             </div>
                                    
                                     <button type="button" className="close" data-dismiss="modal" aria-label="Close">
@@ -273,7 +280,7 @@ export default class HealthAgent_statistics extends Component {
                                         <div className="timeline-item">
                                         <h3 className="timeline-header">INFECTED</h3>
                                         <div className="timeline-body">
-                                        <b>{hist.nb_suspected}</b>
+                                        <b>{stat.nbSuspected}</b>
                                         
                                         </div>
                                         
@@ -286,7 +293,7 @@ export default class HealthAgent_statistics extends Component {
                                         <div className="timeline-item">
                                         <h3 className="timeline-header no-border">RECOVERED</h3>
                                         <div className="timeline-body">
-                                        <b>{hist.nb_recovered}</b>
+                                        <b>{stat.nbRecovered}</b>
                                         </div>
                                         </div>
                                     </div>
@@ -297,7 +304,7 @@ export default class HealthAgent_statistics extends Component {
                                         <div className="timeline-item">
                                         <h3 className="timeline-header">DECEASED</h3>
                                         <div className="timeline-body">
-                                        <b>{hist.nb_death}</b>
+                                        <b>{stat.nbDeaths}</b>
                                         </div>
                                        
                                         </div>
@@ -309,21 +316,12 @@ export default class HealthAgent_statistics extends Component {
                                         <div className="timeline-item">
                                         <h3 className="timeline-header">CURRENTLY SICK</h3>
                                         <div className="timeline-body">
-                                        <b>{hist.nb_confirmed}</b>
+                                        <b>{stat.nbConfirmed}</b>
                                         </div>
                                         </div>
                                     </div>
                                     {/* END timeline item */}
-                                    <div>
-                                        <i className="fas bg-gray"></i>
-                                        <div className="timeline-item">
-                                        <h3 className="timeline-header">INFECTED BUT NOT YET SICK</h3>
-                                        <div className="timeline-body">
-                                        <b>{hist.nb_notyetsick}</b>
-                                        </div>
-                                        </div>
-                                    </div>
-                                    
+                                   
                                     </div>
                                 </div>
                                 {/* /.col */}
