@@ -5,8 +5,8 @@ import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
 
-//const API_URL = 'http://localhost:8080';
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = 'http://localhost:8080';
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
@@ -25,25 +25,26 @@ const buttonStyle={
 export default class Historic extends Component {
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
 
-        
+        const accessToken = localStorage.getItem("accessToken")
+
         let loggedIn =true
-        if(token==null){
+        if(accessToken==null){
             loggedIn = false
         }
-        let type = '2'
-        if(user_type==='0'){
-           type='0'
+
+        const userType =localStorage.getItem("usertype")
+        
+        let type = 'HealthAgent'
+        if(userType==='SuperAdmin'){
+           type='SuperAdmin'
         }
-        if(user_type==='1'){
-            type='1'
-         }
-    
-         if(user_type==='3'){
-            type='3'
-         }
+        if(userType==='Redactor'){
+            type='Redactor'
+        }
+        if(userType==='Moderator'){
+            type='Moderator'
+        }
         this.state = {
              loggedIn,
              type,

@@ -7,7 +7,8 @@ import axios from 'axios';
 import { Player } from 'video-react';
 import "../../../node_modules/video-react/dist/video-react.css";
 
-const API_URL = 'https://coronawatch.herokuapp.com/api/article';
+const API_URL = 'http://localhost:8080';
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 
 //Styles
@@ -38,30 +39,41 @@ const greenButton={
     float:'right'
     
  };
+ const appropriateButton={
+    backgroundColor:'#009F95',
+    color: 'white',
+    float:'right' 
+ };
+ const redBackground={
+    backgroundColor:'#F9A2B2',
+    
+ };
+ 
 
 export default class Articles extends Component {
 
     constructor(props) {
         super(props)
-        const token = localStorage.getItem("login")
-        const user_type =localStorage.getItem("user_type")
 
-        
+        const accessToken = localStorage.getItem("accessToken")
+
         let loggedIn =true
-        if(token==null){
+        if(accessToken==null){
             loggedIn = false
         }
-        let type = '1'
-        if(user_type==='0'){
-           type='0'
+
+        const userType =localStorage.getItem("usertype")
+        
+        let type = 'Moderator'
+        if(userType==='SuperAdmin'){
+           type='SuperAdmin'
         }
-        if(user_type==='2'){
-            type='2'
-         }
-    
-         if(user_type==='3'){
-            type='3'
-         }
+        if(userType==='Redactor'){
+            type='Redactor'
+        }
+        if(userType==='HealthAgent'){
+            type='HealthAgent'
+        }
         this.state = {
              loggedIn,
              type,
@@ -71,21 +83,23 @@ export default class Articles extends Component {
         this.onClickValidate =this.onClickValidate.bind(this)
         this.onClickInvalidate =this.onClickInvalidate.bind(this)
         this.onClickGetComments =this.onClickGetComments.bind(this)
-        this.onClickDeleteComment =this.onClickDeleteComment.bind(this)
+        this.onClickInappropriateComment =this.onClickInappropriateComment.bind(this)
     }
-    // for validate an article
-    onClickValidate = (id) =>{
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------          VALIDATE ARTICLE        ------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------    
+onClickValidate = (id) =>{
 
         console.log(this.state)
-        const token = localStorage.getItem("login")
-     let url = `https://coronawatch.herokuapp.com/api/article/${id}/validate/`;
-     axios.patch(url,'',{
-       headers: {
-         'content-type': 'application/json',
-         Authorization: `Token ${token}`
-       }
-     })
-     .then(response => {
+        //const token = localStorage.getItem("login")
+        let url = `${API_URL}/Articles/Article/Validate?id=${id}&validate=true`;
+        axios.put(url/*,{
+            headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+        }*/)
+        .then(response => {
                 console.log(response)
                 console.log(response.data)
                 if (response.status === 200) {
@@ -103,25 +117,27 @@ export default class Articles extends Component {
  
     }
 
-    // for invalidate an article
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------          INVALIDATE ARTICLE        ----------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------    
     onClickInvalidate = (id) =>{
 
         console.log(this.state)
-        const token = localStorage.getItem("login")
-     let url = `https://coronawatch.herokuapp.com/api/article/${id}/invalidate/`;
-     axios.patch(url,'',{
-       headers: {
-         'content-type': 'application/json',
-         Authorization: `Token ${token}`
-       }
-     })
-     .then(response => {
+        //const token = localStorage.getItem("login")
+        let url = `${API_URL}/Articles/Article/Validate?id=${id}&validate=false`;
+        axios.put(url/*,{
+            headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+        }*/)
+        .then(response => {
                 console.log(response)
                 console.log(response.data)
                 if (response.status === 200) {
-                    console.log ("Article invalidated successfully");
+                    console.log ("Article validated successfully");
                     
-                alert('Article invalidated successfully');
+                alert('Article validated successfully');
                      window.location.reload();
                   }
             })
@@ -132,94 +148,125 @@ export default class Articles extends Component {
             })
  
     }
+    //--------------------------------------------------------------------------------------------------------------------
+    //----------------------------------          ARTICLE'S COMMENTS     -------------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------
+     onClickGetComments = (id) =>{
+    
+        console.log(this.state)
+        //const accessT oken = localStorage.getItem("accessToken")
+        let url = `${API_URL}/Articles/Article/Comments?id=${id}`;
+        axios.get(url/*,{
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Token ${token}`
+        }
+      }*/)
+            .then(response => {
+                console.log(response)
+                this.setState({ comment_list: response.data})
+                if (response.status === 200) {
+                    console.log("List comment getted")
+                  }
+             })
+    
+            .catch(error => {
+                console.log(error.message)
+                console.log(error)
+                  
+            })
+    
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+    //----------------------------------          Inappropriate Comment     ----------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------
+    onClickInappropriateComment = (idarticle,idcomment) =>{
 
-    //for get article's Comments
- onClickGetComments = (id) =>{
-
-    console.log(this.state)
     const token = localStorage.getItem("login")
- let url = `${API_URL}/${id}/comments/`;
- axios.get(url,{
+    let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=true`;
+    axios.put(url/*,{
     headers: {
-      'content-type': 'application/json',
-      Authorization: `Token ${token}`
+        'content-type': 'application/json',
+        Authorization: `Token ${token}`
     }
-  })
-        .then(response => {
-            console.log(response)
-            this.setState({ comment_list: response.data})
-            if (response.status === 200) {
-                console.log("List comment getted")
-              }
-        })
-
-        .catch(error => {
-            console.log(error.message)
-            console.log(error)
-              
-        })
-
-}
-
-//for delete an comment 
-onClickDeleteComment = (id) =>{
-
-    const token = localStorage.getItem("login")
- let url = `${API_URL}/detailComment/${id}/`;
- axios.delete(url,{
-   headers: {
-     'content-type': 'application/json',
-     Authorization: `Token ${token}`
-   }
- })
- .then(response => {
-            console.log(response)
-            console.log(response.data)
-            if (response.status === 204) {
-                console.log ("Comment deleted successfully")
-                alert('Comment deleted successfully');
-                    window.location.reload();
-              }
-        })
-        .catch(error => {
-            console.log(error.message)
-            console.log(error)
-              
-        })
+    }*/)
+    .then(response => {
+                console.log(response)
+                console.log(response.data)
+                if (response.status === 200) {
+                    console.log ("Comment declared Inappropriate successfully ")
+                    alert('Comment declared Inappropriate successfully');
+                        window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.log(error.message)
+                console.log(error)
+                
+            })
 
 }
 
-    componentDidMount(){
-        //get list of articles
+ //--------------------------------------------------------------------------------------------------------------------
+    //----------------------------------          Inappropriate Comment     ----------------------------------------------
+    //--------------------------------------------------------------------------------------------------------------------
+    onClickappropriateComment = (idarticle,idcomment) =>{
+
         const token = localStorage.getItem("login")
-        let url='https://coronawatch.herokuapp.com/api/article/'
-        axios.get(url, {
-            headers: {
-              'content-type': 'multipart/form-data',
-              Authorization: `Token ${token}`
-            }
-          })
+        let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=false`;
+        axios.put(url/*,{
+        headers: {
+            'content-type': 'application/json',
+            Authorization: `Token ${token}`
+        }
+        }*/)
         .then(response => {
-            console.log(response)
-            this.setState({ article_list: response.data})
-        })
-        .catch(error => {
-            console.log(error)
-        })
-        
+                    console.log(response)
+                    console.log(response.data)
+                    if (response.status === 200) {
+                        console.log ("Comment declared appropriate successfully ")
+                        alert('Comment declared appropriate successfully');
+                            window.location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.log(error.message)
+                    console.log(error)
+                    
+                })
+    
     }
+componentDidMount(){
+    //const accessToken = localStorage.getItem("accessToken")
+    let url = `${API_URL}/Articles`;
+    axios.get(url/*, {
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Token ${token}`
+        }
+      }*/)
+    .then(response => {
+        console.log(response)
+        this.setState({ article_list: response.data})
+    })
+    .catch(error => {
+        console.log(error.message)
+        console.log(error)
+          
+    })
+}
 
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
         }
-        if(this.state.type ==='0'){
+        if(this.state.type ==='SuperAdmin'){
             return <Redirect to="/admin_dashboard"/>
         }
-        if(this.state.type ==='2'){
+        if(this.state.type ==='HealthAgent'){
             return <Redirect to="/halthAgent_dashboard"/>
         }
-        if(this.state.type ==='3'){
+        if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
 
@@ -263,21 +310,21 @@ onClickDeleteComment = (id) =>{
                             {
                                       article_list.length ? 
                                       article_list.map(post =>  
-                                      <div className="col-md-6" key={post.id}>
+                                      <div className="col-md-6" key={post.idArticle}>
                                           {/* Box Comment */}
                                         <div className="card card-widget collapsed-card">  
                                         <div className="card-header">
                                             <div className="user-block">
                                             <span  style={{color:'blue',fontSize:'20px'}}><b>{post.title}</b></span>
                                             <br/>
-                                            <span style={{color:'gray', fontSize:'13px'}} >Shared publicly - {post.date}</span>
+                                            {/*<span style={{color:'gray', fontSize:'13px'}} >Shared publicly - {post.date}</span>*/}
                                             </div>
                                             {/* /.user-block */}
                                             <div className="card-tools">
-                                            {(post.valide===true) ? 
-                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this article?')) this.onClickInvalidate(post.id) } }  style={validatedButton}>VALIDATED</button>
-                                            :(post.valide===false) ? 
-                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this article?')) this.onClickValidate(post.id) } } style={greenButton}  >VALIDATE</button>
+                                            {(post.articleValidate===true) ? 
+                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this article?')) this.onClickInvalidate(post.idArticle) } }  style={validatedButton}>VALIDATED</button>
+                                            :(post.articleValidate===false) ? 
+                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this article?')) this.onClickValidate(post.idArticle) } } style={greenButton}  > VALIDATE </button>
                                             :null}
                                                 
                                             <button type="button" className="btn " data-card-widget="maximize" style={blueStyle}><i className="fas fa-expand"></i></button>
@@ -292,7 +339,7 @@ onClickDeleteComment = (id) =>{
                                         <div className="card-body">
                                             {/* post text */}
                                             <div dangerouslySetInnerHTML={{ __html: post.content }}/>
-                                            {/* Attachment */}
+                                            {/* Attachment 
                                             {
                                                 post.attachments.length ?
                                                 post.attachments.map(attach => { return attach.attachment_type==='photo' ?
@@ -311,36 +358,39 @@ onClickDeleteComment = (id) =>{
                                                 :null}
                                                 ):null
                                             }
+                                            */}
                                             {/* /.attachment-block */}
                                             <hr/>
-                                            <button type="button" onClick={() =>this.onClickGetComments(post.id)} className="btn btn-default btn-sm  "><i className="fas fa-plus"></i> See Comments</button>
+                                            <button type="button" onClick={() =>this.onClickGetComments(post.idArticle)} className="btn btn-default btn-sm  "><i className="fas fa-plus"></i> See Comments</button>
                                         
                                             </div>
                                          {/* /.card-body */}
                                          <div className="card-footer card-comments">
-                                         {
-                                      comment_list.length ? 
-                                      comment_list.map(comment =>  
-                                      <div className="card-comment" key={comment.id}>
-                                      
-                                      {/* User image */}
-                                      <img className="img-circle img-sm" src="../dist/img/user5-128x128.jpg" alt="User_Image" />
-                                        <div className="comment-text">
-                                          <span className="username">
-                                          User {comment.mobileuserid}
-                                          <span className="text-muted float-right">{comment.date}</span>
-                                          </span>{/* /.username */}
-                                         {comment.content}
-                                         <button type="button" className="btn btn-sm" style={orangeButton} onClick={() =>{ if (window.confirm('Are you sure you wish to delete this comment?')) this.onClickDeleteComment(comment.id) } }>Delete</button>
-                                            
-                                      </div>
-                                      {/* /.comment-text */}
-                                      </div>
-                                      
-                                      ): null}
+                                            {comment_list.length ? 
+                                                comment_list.map(comment =>
+                                                <div className="card-comment" key={comment.idCommentary}  >
+                                                    {/* User image */}
+                                                    <img className="img-circle img-sm" src="../dist/img/user5-128x128.jpg" alt="User_Image" />
+                                                    <div className="comment-text">
+                                                        <span className="username" >
+                                                            User {comment.mobileuserid}
+                                                        </span>{/* /.username */}
+                                                        {(comment.inappropriate===false) ? 
+                                                        <p >{comment.commentContent }    </p> 
+                                                        :(comment.inappropriate===true) ?
+                                                        <p style={redBackground}>{comment.commentContent }    </p> 
+                                                        :null}                              
+                                                        {(comment.inappropriate===false) ? 
+                                                            <button type="button" className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish declare this comment as Inappropriate?')) this.onClickInappropriateComment(post.idArticle,comment.idCommentary) } }style={orangeButton}  > Declare as Inappropriate</button>
+                                                        :(comment.inappropriate===true) ? 
+                                                            <button type="button" className="btn btn-sm"  onClick={() =>{ if (window.confirm('Are you sure you wish declare this comment as appropriate?')) this.onClickappropriateComment(post.idArticle,comment.idCommentary) } }style={appropriateButton}> Declare as Appropriate </button>
+                                                        :null}
+                                                    </div>
+                                                    {/* /.comment-text */}
+                                                </div>
+                                            ): null}
                                            
-                                        </div>
-                                            
+                                        </div>    
                                        </div>    
                                       </div>
                                   ): null

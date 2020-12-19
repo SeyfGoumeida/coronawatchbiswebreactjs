@@ -18,17 +18,17 @@ const Users= React.lazy(() => import('./Admin/views/Users'));
 const Redactordashboard= React.lazy(() => import('./Redactor/App'));
 const Articles= React.lazy(() => import('./Redactor/views/Articles'));
 // //Moderator
-// const Moderatordashboard= React.lazy(() => import('./Moderator/App'));
-// const ModeratorArticles= React.lazy(() => import('./Moderator/views/Articles'));
-// const Robots= React.lazy(() => import('./Moderator/views/Robots'));
-// const Robots_facebook= React.lazy(() => import('./Moderator/views/Robots_facebook'));
-// const Robots_youtube= React.lazy(() => import('./Moderator/views/Robots_youtube'));
-// const Robots_webSites= React.lazy(() => import('./Moderator/views/Robots_webSites'));
-// const Inbox= React.lazy(() => import('./Moderator/views/Inbox'));
-// const HealthAgentStatistics= React.lazy(() => import('./Moderator/views/HealthAgent_statistics'));
-// const RiskZones= React.lazy(() => import('./Moderator/views/RiskZones'));
-// const ClientVideos= React.lazy(() => import('./Moderator/views/Client_videos'));
-// const LogFile= React.lazy(() => import('./Moderator/views/Log_file'));
+const Moderatordashboard= React.lazy(() => import('./Moderator/App'));
+const ModeratorArticles= React.lazy(() => import('./Moderator/views/Articles'));
+const Robots= React.lazy(() => import('./Moderator/views/Robots'));
+const Robots_facebook= React.lazy(() => import('./Moderator/views/Robots_facebook'));
+const Robots_youtube= React.lazy(() => import('./Moderator/views/Robots_youtube'));
+const Robots_webSites= React.lazy(() => import('./Moderator/views/Robots_webSites'));
+const Inbox= React.lazy(() => import('./Moderator/views/Inbox'));
+const HealthAgentStatistics= React.lazy(() => import('./Moderator/views/HealthAgent_statistics'));
+const RiskZones= React.lazy(() => import('./Moderator/views/RiskZones'));
+const ClientVideos= React.lazy(() => import('./Moderator/views/Client_videos'));
+const LogFile= React.lazy(() => import('./Moderator/views/Log_file'));
 
 // //Health Agent
 const HealthAgentdashboard= React.lazy(() => import('./HealthAgent/App'));
@@ -56,7 +56,7 @@ class App extends Component {
             <Route exact path="/redactor_dashboard/home" name="Redactor_home" component={Redactordashboard}/>
             <Route exact path="/redactor_dashboard/articles" name="Redactor_articles" component={ Articles}/>
             {/*Moderator*/}
-            {/* <Route exact path="/moderator_dashboard" name="Moderator_dashboard" component={Moderatordashboard}/>
+            <Route exact path="/moderator_dashboard" name="Moderator_dashboard" component={Moderatordashboard}/>
             <Route exact path="/moderator_dashboard/home" name="Moderator_home" component={Moderatordashboard}/>
             <Route exact path="/moderator_dashboard/articles" name="Moderator_articles" component={ModeratorArticles}/>
             <Route exact path="/moderator_dashboard/robots" name="Moderator_robots" component={Robots}/>
@@ -67,7 +67,7 @@ class App extends Component {
             <Route exact path="/moderator_dashboard/healthAgent_statistics" name="Moderator_healthAgent_statistics" component={HealthAgentStatistics}/>
             <Route exact path="/moderator_dashboard/riskZones" name="Moderator_risk_zones" component={RiskZones}/>
             <Route exact path="/moderator_dashboard/client_videos" name="Moderator_client_videos" component={ClientVideos}/>
-            <Route exact path="/moderator_dashboard/log_file" name="Moderator_log_file" component={LogFile}/> */}
+            <Route exact path="/moderator_dashboard/log_file" name="Moderator_log_file" component={LogFile}/>
             {/*Health Agent*/}
             <Route exact path="/healthAgent_dashboard" name="HealthAgent_dashboard" component={HealthAgentdashboard}/>
             <Route exact path="/healthAgent_dashboard/historic" name="Historic" component={HealthAgenthistoric}/>
