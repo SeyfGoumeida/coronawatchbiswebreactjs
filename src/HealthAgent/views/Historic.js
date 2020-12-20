@@ -45,6 +45,9 @@ export default class Historic extends Component {
         if(userType==='Moderator'){
             type='Moderator'
         }
+        if(userType==='WebUser'){
+            type='WebUser'
+        }
         this.state = {
              loggedIn,
              type,
@@ -311,9 +314,9 @@ render() {
                                  View Region's Historic</button>
                                  &nbsp;&nbsp;
 
-                 {(riskregion===true) ? 
+                 {(riskregion==="NonRisk") ? 
                                     <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareRiskRegion(region_id) } } >Undeclare It As Risk Region</button>
-                                :(riskregion===false) ? 
+                                :(riskregion==="NonValidatedRisk") ? 
                                      <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareRiskRegion(region_id) } }   >Declare It As Risk Region</button>
                                      :null}       
                  

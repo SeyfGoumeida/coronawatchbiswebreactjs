@@ -27,6 +27,10 @@ export default class App extends Component {
          if(userType==='Redactor'){
             type='Redactor'
          }
+         if(userType==='WebUser'){
+            type='WebUser'
+         }
+         
         this.state = {
              loggedIn,
              type
@@ -44,6 +48,9 @@ export default class App extends Component {
         }
         if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
+        }
+        if(this.state.type ==='WebUser'){
+            return <Redirect to="/webuser_dashboard"/>
         }
         return (
             <div>

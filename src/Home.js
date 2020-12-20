@@ -60,11 +60,11 @@ export default class Home extends Component {
                     <div className="col-sm-6">
                         <h1 style={whiteStyle}>Home</h1>
                     </div>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
-    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <br/>
  
                     <div className="col-sm-6">
                         <ol className="breadcrumb float-sm-right">

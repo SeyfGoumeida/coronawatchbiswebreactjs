@@ -23,31 +23,10 @@ const whiteStyle={
 const greenButton={
     borderColor:'#172B4D',
     backgroundColor:'#009F95',
-    color: 'white'
-    
- };
- const validatedButton={
-    borderColor:'#172B4D',
-    backgroundColor:' #cceeff',
-    color: '#009F95'
-    
- };
- const orangeButton={
-    backgroundColor:'#e65c00',
-    color: 'white',
-    float:'right'
-    
- };
- const appropriateButton={
-    backgroundColor:'#009F95',
     color: 'white',
     float:'right' 
+
  };
- const redBackground={
-    backgroundColor:'#F9A2B2',
-    
- };
- 
 
 export default class Articles extends Component {
 
@@ -63,7 +42,7 @@ export default class Articles extends Component {
 
         const userType =localStorage.getItem("usertype")
         
-        let type = 'Moderator'
+        let type = 'WebUser'
         if(userType==='SuperAdmin'){
            type='SuperAdmin'
         }
@@ -73,83 +52,27 @@ export default class Articles extends Component {
         if(userType==='HealthAgent'){
             type='HealthAgent'
         }
-        if(userType==='WebUser'){
-            type='WebUser'
+        if(userType==='Moderator'){
+            type='Moderator'
         }
         this.state = {
              loggedIn,
              type,
              article_list: [],
-             comment_list: []
+             comment_list: [],
+             commentcontent :""
         }
-        this.onClickValidate =this.onClickValidate.bind(this)
-        this.onClickInvalidate =this.onClickInvalidate.bind(this)
         this.onClickGetComments =this.onClickGetComments.bind(this)
-        this.onClickInappropriateComment =this.onClickInappropriateComment.bind(this)
-    }
-//--------------------------------------------------------------------------------------------------------------------
-//----------------------------------          VALIDATE ARTICLE        ------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------    
-onClickValidate = (id) =>{
+        this.onClickAddComment =this.onClickAddComment.bind(this)
+        this.changeHandler =this.changeHandler.bind(this)
 
-        console.log(this.state)
-        //const token = localStorage.getItem("login")
-        let url = `${API_URL}/Articles/Article/Validate?id=${id}&validate=true`;
-        axios.put(url/*,{
-            headers: {
-            'content-type': 'application/json',
-            Authorization: `Token ${token}`
-        }
-        }*/)
-        .then(response => {
-                console.log(response)
-                console.log(response.data)
-                if (response.status === 200) {
-                    console.log ("Article validated successfully");
-                    
-                alert('Article validated successfully');
-                     window.location.reload();
-                  }
-            })
-            .catch(error => {
-                console.log(error.message)
-                console.log(error)
-                  
-            })
- 
     }
 
-//--------------------------------------------------------------------------------------------------------------------
-//----------------------------------          INVALIDATE ARTICLE        ----------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------    
-    onClickInvalidate = (id) =>{
+    changeHandler = (e) => {
+        this.setState({[e.target.name]: e.target.value})
 
-        console.log(this.state)
-        //const token = localStorage.getItem("login")
-        let url = `${API_URL}/Articles/Article/Validate?id=${id}&validate=false`;
-        axios.put(url/*,{
-            headers: {
-            'content-type': 'application/json',
-            Authorization: `Token ${token}`
-        }
-        }*/)
-        .then(response => {
-                console.log(response)
-                console.log(response.data)
-                if (response.status === 200) {
-                    console.log ("Article validated successfully");
-                    
-                alert('Article validated successfully');
-                     window.location.reload();
-                  }
-            })
-            .catch(error => {
-                console.log(error.message)
-                console.log(error)
-                  
-            })
- 
     }
+
     //--------------------------------------------------------------------------------------------------------------------
     //----------------------------------          ARTICLE'S COMMENTS     -------------------------------------------------
     //--------------------------------------------------------------------------------------------------------------------
@@ -179,65 +102,43 @@ onClickValidate = (id) =>{
             })
     
     }
-    //--------------------------------------------------------------------------------------------------------------------
-    //----------------------------------          Inappropriate Comment     ----------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------------
-    onClickInappropriateComment = (idarticle,idcomment) =>{
 
+//--------------------------------------------------------------------------------------------------------------------
+//----------------------------------               Add Comment        ------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------------    
+onClickAddComment = (id,content,idUser) =>{
+
+    console.log(this.state)
     //const token = localStorage.getItem("login")
-    let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=true`;
-    axios.put(url/*,{
-    headers: {
+    let url = `${API_URL}/Articles/Article/AddComment?id=${id}&content=${content}&idUser=${idUser}`;
+    axios.post(url/*,{
+        headers: {
         'content-type': 'application/json',
         Authorization: `Token ${token}`
     }
     }*/)
     .then(response => {
-                console.log(response)
-                console.log(response.data)
-                if (response.status === 200) {
-                    console.log ("Comment declared Inappropriate successfully ")
-                    alert('Comment declared Inappropriate successfully');
-                        window.location.reload();
-                }
-            })
-            .catch(error => {
-                console.log(error.message)
-                console.log(error)
+            console.log(response)
+
+            console.log(response.data)
+            console.log(idUser)
+
+            if (response.status === 200) {
+                console.log ("Comment added successfully");
                 
-            })
+            // alert('Comment added successfully');
+            //      window.location.reload();
+              }
+        })
+        .catch(error => {
+            console.log(error.message)
+            console.log(error)
+              
+        })
 
 }
 
- //--------------------------------------------------------------------------------------------------------------------
-    //----------------------------------          Inappropriate Comment     ----------------------------------------------
-    //--------------------------------------------------------------------------------------------------------------------
-    onClickappropriateComment = (idarticle,idcomment) =>{
-
-        //const token = localStorage.getItem("login")
-        let url = `${API_URL}/Articles/Article/Comments?id=${idarticle}&commentId=${idcomment}&inappropriate=false`;
-        axios.put(url/*,{
-        headers: {
-            'content-type': 'application/json',
-            Authorization: `Token ${token}`
-        }
-        }*/)
-        .then(response => {
-                    console.log(response)
-                    console.log(response.data)
-                    if (response.status === 200) {
-                        console.log ("Comment declared appropriate successfully ")
-                        alert('Comment declared appropriate successfully');
-                            window.location.reload();
-                    }
-                })
-                .catch(error => {
-                    console.log(error.message)
-                    console.log(error)
-                    
-                })
     
-    }
 componentDidMount(){
     //const accessToken = localStorage.getItem("accessToken")
     let url = `${API_URL}/Articles`;
@@ -271,11 +172,11 @@ componentDidMount(){
         if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
-        if(this.state.type ==='WebUser'){
-            return <Redirect to="/webuser_dashboard"/>
+        if(this.state.type ==='Moderator'){
+            return <Redirect to="/moderator_dashboard"/>
         }
 
-        const {article_list,comment_list}= this.state
+        const {article_list,comment_list,commentcontent}= this.state
 
         return (
             <div>
@@ -326,12 +227,7 @@ componentDidMount(){
                                             </div>
                                             {/* /.user-block */}
                                             <div className="card-tools">
-                                            {(post.articleValidate===true) ? 
-                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this article?')) this.onClickInvalidate(post.idArticle) } }  style={validatedButton}>VALIDATED</button>
-                                            :(post.articleValidate===false) ? 
-                                            <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this article?')) this.onClickValidate(post.idArticle) } } style={greenButton}  > VALIDATE </button>
-                                            :null}
-                                                
+                                              
                                             <button type="button" className="btn " data-card-widget="maximize" style={blueStyle}><i className="fas fa-expand"></i></button>
                                             <button type="button" className="btn " data-card-widget="collapse"style={blueStyle}><i className="fas fa-plus" />
                                             </button>
@@ -371,29 +267,30 @@ componentDidMount(){
                                             </div>
                                          {/* /.card-body */}
                                          <div className="card-footer card-comments">
+                                            
                                             {comment_list.length ? 
                                                 comment_list.map(comment =>
-                                                <div className="card-comment" key={comment.idCommentary}  >
-                                                    {/* User image */}
-                                                    <img className="img-circle img-sm" src="../dist/img/user5-128x128.jpg" alt="User_Image" />
-                                                    <div className="comment-text">
-                                                        <span className="username" >
-                                                            User {comment.mobileuserid}
-                                                        </span>{/* /.username */}
-                                                        {(comment.inappropriate===false) ? 
-                                                        <p >{comment.commentContent }    </p> 
-                                                        :(comment.inappropriate===true) ?
-                                                        <p style={redBackground}>{comment.commentContent }    </p> 
-                                                        :null}                              
-                                                        {(comment.inappropriate===false) ? 
-                                                            <button type="button" className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish declare this comment as Inappropriate?')) this.onClickInappropriateComment(post.idArticle,comment.idCommentary) } }style={orangeButton}  > Declare as Inappropriate</button>
-                                                        :(comment.inappropriate===true) ? 
-                                                            <button type="button" className="btn btn-sm"  onClick={() =>{ if (window.confirm('Are you sure you wish declare this comment as appropriate?')) this.onClickappropriateComment(post.idArticle,comment.idCommentary) } }style={appropriateButton}> Declare as Appropriate </button>
-                                                        :null}
-                                                    </div>
-                                                    {/* /.comment-text */}
-                                                </div>
+                                                        <div className="card-comment" key={comment.idCommentary}  >
+                                                            {/* User image */}
+                                                            <img className="img-circle img-sm" src="../dist/img/user5-128x128.jpg" alt="User_Image" />
+                                                            <div className="comment-text">
+                                                            <span className="username" >
+                                                                 {(comment.commentEditor!==null) ?    comment.commentEditor.firstName
+                                                                    :(comment.commentEditor===null) ? 
+                                                                    <p>User </p>
+                                                                    : null}
+                                                                </span>{/* /.username */}
+                                                                <p >{comment.commentContent }    </p>
+                                                            </div>
+                                                            {/* /.comment-text */}
+                                                        </div>
                                             ): null}
+                                            <div>  
+                                                <p > Add your comment </p>
+                                                <textarea type="commentcontent" name="commentcontent" id="commentcontent" className="form-control" placeholder="Type your comment here..." value={commentcontent} onChange={this.changeHandler}/>
+                                                <button  className="btn btn-sm" onClick={() =>{ this.onClickAddComment(post.idArticle,commentcontent,localStorage.getItem("id")) } } style={greenButton}  > Comment </button>
+
+                                            </div>  
                                            
                                         </div>    
                                        </div>    

@@ -55,9 +55,6 @@ export default class HealthAgent_statistics extends Component {
          if(userType==='Redactor'){
             type='Redactor'
          }
-         if(userType==='WebUser'){
-            type='WebUser'
-        }
         this.state = {
              loggedIn,
              type,

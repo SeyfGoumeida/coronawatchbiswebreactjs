@@ -26,6 +26,12 @@ const RiskZones= React.lazy(() => import('./Moderator/views/RiskZones'));
 // //Health Agent
 const HealthAgentdashboard= React.lazy(() => import('./HealthAgent/App'));
 const HealthAgenthistoric= React.lazy(() => import('./HealthAgent/views/Historic'));
+// //Web User
+const WebUserdashboard= React.lazy(() => import('./WebUser/App'));
+const WebUserArticles= React.lazy(() => import('./WebUser/views/Articles'));
+const WebUserStatistics= React.lazy(() => import('./WebUser/views/HealthAgent_statistics'));
+const WebUserRiskZones= React.lazy(() => import('./WebUser/views/RiskZones'));
+
 
 class App extends Component {
 
@@ -58,7 +64,12 @@ class App extends Component {
             {/*Health Agent*/}
             <Route exact path="/healthAgent_dashboard" name="HealthAgent_dashboard" component={HealthAgentdashboard}/>
             <Route exact path="/healthAgent_dashboard/historic" name="Historic" component={HealthAgenthistoric}/>
-  
+            {/*WebUser*/}
+            <Route exact path="/WebUser_dashboard" name="WebUser_dashboard" component={WebUserdashboard}/>
+            <Route exact path="/WebUser_dashboard/home" name="WebUser_home" component={WebUserdashboard}/>
+            <Route exact path="/WebUser_dashboard/articles" name="WebUser_articles" component={WebUserArticles}/>
+            <Route exact path="/WebUser_dashboard/statistics" name="WebUser_statistics" component={WebUserStatistics}/>
+            <Route exact path="/WebUser_dashboard/riskZones" name="WebUser_risk_zones" component={WebUserRiskZones}/>
             {/*General*/}
             <Route exact path="/" name="Home" component={Login}  />
             <Route component={Login}/> 

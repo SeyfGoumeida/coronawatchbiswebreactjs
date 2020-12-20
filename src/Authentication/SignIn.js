@@ -86,6 +86,9 @@ export default class SignIn extends Component {
         if (user_type==='SuperAdmin'){
             return <Redirect to="/admin_dashboard"/>
         }
+        if (user_type==='WebUser'){
+            return <Redirect to="/webuser_dashboard"/>
+        }
         if (user_type==='Moderator'){
             return <Redirect to="/moderator_dashboard"/>
         }

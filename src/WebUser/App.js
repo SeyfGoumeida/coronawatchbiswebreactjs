@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
 import Header from '../Header';
 import Menu from './Menu';
 import Footer from '../Footer';
 import Home from '../Home';
-
-
+import {Redirect} from 'react-router-dom';
 
 export default class App extends Component {
     constructor(props) {
@@ -16,40 +14,50 @@ export default class App extends Component {
         
         let loggedIn =true
         if(accessToken==null){
-             loggedIn = false
+            loggedIn = false
         }
-      
+        let type = 'WebUser'
+        if(userType==='SuperAdmin'){
+           type='SuperAdmin'
+        }
+        if(userType==='HealthAgent'){
+            type='HealthAgent'
+         }
+    
+         if(userType==='Redactor'){
+            type='Redactor'
+         }
+         if(userType==='Moderator'){
+            type='Moderator'
+         }
         this.state = {
              loggedIn,
-             userType
+             type
         }
     }
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
         }
-        if(this.state.userType ==='Moderator'){
-            return <Redirect to="/moderator_dashboard"/>
+        if(this.state.type ==='SuperAdmin'){
+            return <Redirect to="/admin_dashboard"/>
         }
-        if(this.state.userType ==='WebUser'){
-            return <Redirect to="/webuser_dashboard"/>
+        if(this.state.type ==='HealthAgent'){
+            return <Redirect to="/healthAgent_dashboard"/>
         }
-        if(this.state.userType ==='HealthAgent'){
-            return <Redirect to="/halthAgent_dashboard"/>
-        }
-        if(this.state.userType ==='Redactor'){
+        if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
+        if(this.state.type ==='Moderator'){
+            return <Redirect to="/moderator_dashboard"/>
+        }
         return (
-
             <div>
-
                 <Header/>
                 <Menu/>
                 <Home/>
                 <Footer/>
             </div>
-            
-        );
+        )
     }
 }

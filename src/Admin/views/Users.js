@@ -72,16 +72,15 @@ export default class Users extends Component {
         //     "Authorization": `Token ${token}`
         // };
     
-        axios
-            .post( `${API_URL}/Users/AddUser `,{
-                "idUser":"",
-                "userName":this.state.userName,
-                "firstName":this.state.firstName,
-                "lastName":this.state.lastName,
-                "email":this.state.email,
-                "passWord":this.state.passWord,
-                "userType":this.state.userType
-            })
+        axios.post(`${API_URL}/Users/AddUser`,{
+            "idUser":"",
+            "userName":this.state.userName,
+            "firstName":this.state.firstName,
+            "lastName":this.state.lastName,
+            "email":this.state.email,
+            "passWord":this.state.passWord,
+            "userType":this.state.userType
+        })
             .then(response => {
                 console.log(response.data)
                 if (response.status === 200) {
@@ -98,8 +97,6 @@ export default class Users extends Component {
                 alert('the userName or email are already used !');
             })
             console.log(this.state)
-
-
     }
 
     //for deleting a USEr 
@@ -170,7 +167,9 @@ export default class Users extends Component {
         if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
-
+        if(this.state.userType ==='WebUser'){
+            return <Redirect to="/webuser_dashboard"/>
+        }
 
         const {users_list,userType,userName,password, email, firstName, lastName} = this.state
         return (

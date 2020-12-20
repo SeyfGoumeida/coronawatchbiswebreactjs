@@ -50,6 +50,10 @@ export default class App extends Component {
         if(userType==='Moderator'){
             type='Moderator'
         }
+        if(userType==='WebUser'){
+            type='WebUser'
+        }
+        
         this.state = {
              loggedIn,
              type,
@@ -186,7 +190,7 @@ onClickDeclareregionRisk = (id) =>{
 
     console.log(this.state)
     //const token = localStorage.getItem("login")
-    let url = `${API_URL}/Regions/Risk?id=${id}&risk=true`;
+    let url = `${API_URL}/Regions/Risk?id=${id}&risk=NonValidatedRisk`;
     axios.post(url/*,'',{
    headers: {
      'content-type': 'application/json',
@@ -217,7 +221,7 @@ onClickUndeclareregionRisk = (id) =>{
 
     console.log(this.state)
     //const token = localStorage.getItem("login")
- let url = `${API_URL}/Regions/Risk?id=${id}&risk=false`;
+ let url = `${API_URL}/Regions/Risk?id=${id}&risk=NonRisk`;
  axios.post(url/*,'',{
    headers: {
      'content-type': 'application/json',
@@ -321,6 +325,9 @@ submitHandler = e =>{
         if(this.state.type ==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
+        if(this.state.type ==='WebUser'){
+            return <Redirect to="/webuser_dashboard"/>
+        }
         const {country_list,idCountry,region_list,idRegion,nb_death,nb_recovered,
             nb_suspected,nb_confirmed,regionRisk}= this.state
         return (
@@ -397,9 +404,9 @@ submitHandler = e =>{
                                      Search Region Details</button>
                                      &nbsp; &nbsp;  
 
-                    {(regionRisk===true) ? 
+                    {(regionRisk==="NonValidatedRisk") ? 
                                     <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareregionRisk(idRegion) } } >Undeclare It As Risk Region</button>
-                                :(regionRisk===false) ? 
+                                :(regionRisk==="NonRisk") ? 
                                      <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareregionRisk(idRegion) } }   >Declare It As Risk Region</button>
                                      :null}          
                      
