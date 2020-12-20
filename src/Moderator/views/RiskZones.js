@@ -234,10 +234,13 @@ export default class RiskZones extends Component {
                         {/*<td>{zone.country_detail.name}</td>*/}
                         <td>{zone.regionName}</td>
                         <td>
-                        {(zone.regionRisk===true) ? 
+                        {(zone.regionRisk==="ValidatedRisk") ? 
                          <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this region as a risk zone?')) this.onClickInvalidate(zone.idRegion) } }  style={RemoveRiskButton}>Remove Risk</button>
-                          :(zone.regionRisk===false) ? 
+                          :(zone.regionRisk==="NonValidatedRisk") ? 
                          <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this region as a risk zone?')) this.onClickValidate(zone.idRegion) } } style={DeclareRiskButton} >Validate Risk</button>
+                          :(zone.regionRisk==="NonRisk") ?
+                          <button  className="btn btn-sm" style={DeclareRiskButton} >Safe Zone</button>
+
                           :null}
 
                         </td>

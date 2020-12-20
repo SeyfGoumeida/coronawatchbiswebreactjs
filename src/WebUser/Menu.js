@@ -50,13 +50,7 @@ export default class Menu extends Component {
                     </li>
                 
                     <li className="nav-item">
-                        <a href="/webuser_dashboard/inbox" className="nav-link">
-                        <i className="nav-icon far fa-envelope" style={{color:'#ff0000'}} />
-                        <p id="nav-item4" style={blueStyle}>Inbox</p>
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a href="/webuser_dashboard/healthAgent_statistics" className="nav-link">
+                        <a href="/webuser_dashboard/statistics" className="nav-link">
                         <i className="nav-icon fa fa-arrow-up" style={{color:'#00e6e6'}} />
                         <p id="nav-item5" style={blueStyle}>Statistics</p>
                         </a>

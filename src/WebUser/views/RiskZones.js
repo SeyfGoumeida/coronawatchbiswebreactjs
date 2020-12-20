@@ -18,16 +18,23 @@ const whiteStyle={
     color: 'white'
 };
 
-const DeclareRiskButton={
+
+ const RISK={
+    borderColor:'#172B4D',
+    backgroundColor:' #F61941',
+    color: '#black'
+    
+ };
+ const NOTYETRISK={
+    borderColor:'#172B4D',
+    backgroundColor:' #FCD0D8',
+    color: 'black'
+    
+ };
+ const SAFE={
     borderColor:'#172B4D',
     backgroundColor:'#009F95',
     color: 'white'
-    
- };
- const RemoveRiskButton={
-    borderColor:'#172B4D',
-    backgroundColor:' #cceeff',
-    color: '#009F95'
     
  };
 
@@ -36,92 +43,35 @@ export default class RiskZones extends Component {
         super(props)
         const accessToken = localStorage.getItem("accessToken")
 
-        let loggedIn =true
-        if(accessToken==null){
-            loggedIn = false
+        let loggedIn = true;
+        if (accessToken == null) {
+        loggedIn = false;
         }
 
-        const userType =localStorage.getItem("usertype")
-        
-        let type = 'Moderator'
-        if(userType==='SuperAdmin'){
-           type='SuperAdmin'
+        const userType = localStorage.getItem("usertype");
+
+        let type = "WebUser";
+        if (userType === "SuperAdmin") {
+        type = "SuperAdmin";
         }
-        if(userType==='HealthAgent'){
-            type='HealthAgent'
-         }
-    
-         if(userType==='Redactor'){
-            type='Redactor'
-         }
+        if (userType === "Redactor") {
+        type = "Redactor";
+        }
+        if (userType === "HealthAgent") {
+        type = "HealthAgent";
+        }
+        if (userType === "Moderator") {
+        type = "Moderator";
+        }
         this.state = {
              loggedIn,
              type,
              zones:[]
         }
-        this.onClickValidate =this.onClickValidate.bind(this)
-        this.onClickInvalidate =this.onClickInvalidate.bind(this)
+        
     }
 
-    // for validate a risk zone 
-    onClickValidate = (id) =>{
 
-        console.log(this.state)
-        //const token = localStorage.getItem("login")
-     let url = `${API_URL}/Regions/Risk?id=${id}&risk=ValidatedRisk`;
-     axios.post(url/*,'',{
-       headers: {
-         'content-type': 'application/json',
-         Authorization: `Token ${token}`
-       }
-     }*/)
-     .then(response => {
-                console.log(response)
-                console.log(response.data)
-                if (response.status === 200) {
-                    console.log ("risk zone validated successfully");
-                    
-                alert('Risk zone validated successfully');
-                     window.location.reload();
-                  }
-            })
-            .catch(error => {
-                console.log(error.message)
-                console.log(error)
-                  
-            })
- 
-    }
-
-    // for invalidate a risk zone
-    onClickInvalidate = (id) =>{
-
-        console.log(this.state)
-        //const token = localStorage.getItem("login")
-        let url = `${API_URL}/Regions/Risk?id=${id}&risk=NonRisk`;
-        axios.post(url/*,'',{
-       headers: {
-         'content-type': 'application/json',
-         Authorization: `Token ${token}`
-       }
-     }*/)
-     .then(response => {
-                console.log(response)
-                console.log(response.data)
-                if (response.status === 200) {
-                    console.log ("Risk zone invalidated successfully");
-                    
-                alert('Risk zone invalidated successfully');
-                     window.location.reload();
-                  }
-            })
-            .catch(error => {
-                console.log(error.message)
-                console.log(error)
-                  
-            })
- 
-    }
 
     componentDidMount(){
 
@@ -158,17 +108,20 @@ export default class RiskZones extends Component {
     }
 
     render() {
-        if(this.state.loggedIn ===false){
-            return <Redirect to="/"/>
+        if (this.state.loggedIn === false) {
+          return <Redirect to="/" />;
         }
-        if(this.state.type ==='SuperAdmin'){
-            return <Redirect to="/admin_dashboard"/>
+        if (this.state.type === "SuperAdmin") {
+          return <Redirect to="/admin_dashboard" />;
         }
-        if(this.state.type ==='HealthAgent'){
-            return <Redirect to="/halthAgent_dashboard"/>
+        if (this.state.type === "HealthAgent") {
+          return <Redirect to="/halthAgent_dashboard" />;
         }
-        if(this.state.type ==='Redactor'){
-            return <Redirect to="/redactor_dashboard"/>
+        if (this.state.type === "Redactor") {
+          return <Redirect to="/redactor_dashboard" />;
+        }
+        if (this.state.type === "Moderator") {
+          return <Redirect to="/moderator_dashboard" />;
         }
 
         const {zones}= this.state
@@ -228,10 +181,13 @@ export default class RiskZones extends Component {
                         {/*<td>{zone.country_detail.name}</td>*/}
                         <td>{zone.regionName}</td>
                         <td>
-                        {(zone.regionRisk===true) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this region as a risk zone?')) this.onClickInvalidate(zone.idRegion) } }  style={RemoveRiskButton}>Remove Risk</button>
-                          :(zone.regionRisk===false) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this region as a risk zone?')) this.onClickValidate(zone.idRegion) } } style={DeclareRiskButton} >Validate Risk</button>
+                        {(zone.regionRisk==="ValidatedRisk") ? 
+                         <button  className="btn btn-sm" style={RISK}> Risk Zone </button>
+                          :(zone.regionRisk==="NonValidatedRisk") ? 
+                         <button  className="btn btn-sm" style={NOTYETRISK} >Non confirmed yet Risk Zone</button>
+                          :(zone.regionRisk==="NonRisk") ?
+                          <button  className="btn btn-sm" style={SAFE} > Safe Zone </button>
+
                           :null}
 
                         </td>

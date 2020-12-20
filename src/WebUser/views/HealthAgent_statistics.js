@@ -19,46 +19,37 @@ const whiteStyle={
 const blueStyle={
     color:'#172B4D' 
 };
-const greenButton={
-    borderColor:'#172B4D',
-    backgroundColor:'#009F95',
-    color: 'white'
-    
- };
- const validatedButton={
-    borderColor:'#172B4D',
-    backgroundColor:' #cceeff',
-    color: '#009F95'
-    
- };
+
 
 export default class HealthAgent_statistics extends Component {
     constructor(props) {
         super(props)
         const accessToken = localStorage.getItem("accessToken")
 
-        let loggedIn =true
-        if(accessToken==null){
-            loggedIn = false
+        let loggedIn = true;
+        if (accessToken == null) {
+        loggedIn = false;
         }
 
-        const userType =localStorage.getItem("usertype")
-        
-        let type = 'Moderator'
-        if(userType==='SuperAdmin'){
-           type='SuperAdmin'
+        const userType = localStorage.getItem("usertype");
+
+        let type = "WebUser";
+        if (userType === "SuperAdmin") {
+        type = "SuperAdmin";
         }
-        if(userType==='HealthAgent'){
-            type='HealthAgent'
-         }
-    
-         if(userType==='Redactor'){
-            type='Redactor'
-         }
+        if (userType === "Redactor") {
+        type = "Redactor";
+        }
+        if (userType === "HealthAgent") {
+        type = "HealthAgent";
+        }
+        if (userType === "Moderator") {
+        type = "Moderator";
+        }
         this.state = {
              loggedIn,
              type,
-             stats:[]
+             stats :[1]
         }
         this.onClickValidate =this.onClickValidate.bind(this)
         this.onClickInvalidate =this.onClickInvalidate.bind(this)
@@ -128,7 +119,7 @@ export default class HealthAgent_statistics extends Component {
         
         console.log(this.state)
         //const token = localStorage.getItem("login")
-        let url = `${API_URL}/Statistics/Regions`;
+        let url = `${API_URL}/Statistics/Regions/Validate`;
         axios.get(url/*,{
             headers: {
             'content-type': 'application/json',
@@ -165,17 +156,20 @@ export default class HealthAgent_statistics extends Component {
     }
 
     render() {
-        if(this.state.loggedIn ===false){
-            return <Redirect to="/"/>
+        if (this.state.loggedIn === false) {
+          return <Redirect to="/" />;
         }
-        if(this.state.type ==='SuperAdmin'){
-            return <Redirect to="/admin_dashboard"/>
+        if (this.state.type === "SuperAdmin") {
+          return <Redirect to="/admin_dashboard" />;
         }
-        if(this.state.type ==='HealthAgent'){
-            return <Redirect to="/halthAgent_dashboard"/>
+        if (this.state.type === "HealthAgent") {
+          return <Redirect to="/halthAgent_dashboard" />;
         }
-        if(this.state.type ==='Redactor'){
-            return <Redirect to="/redactor_dashboard"/>
+        if (this.state.type === "Redactor") {
+          return <Redirect to="/redactor_dashboard" />;
+        }
+        if (this.state.type === "Moderator") {
+          return <Redirect to="/moderator_dashboard" />;
         }
 
         const {stats}= this.state
@@ -214,39 +208,29 @@ export default class HealthAgent_statistics extends Component {
                 </div>
                 
                 <div className="card-body table-responsive ">
-                <table id="example1" className="table table-striped table-valign-middle">
+                <table id="example1" className="table table-striped table-valign-middle" >
                     <thead>
                         <tr>
-                        <th id="th1">Username</th>
-                        <th id="th2">Region Name</th>
-                        <th id="th3">Place</th>
-                        <th id="th4">State</th>
-                        <th id="th5">More</th>
+                            <th id="th2">Region Name</th>
+                            <th id="th1">Deaths</th>
+                            <th id="th3">Recovered</th>
+                            <th id="th5">Confirmed</th>
+                            <th id="th1">Suspected</th>
+                            <th id="th4">More</th>
+
                         </tr>
                     </thead>
                     <tbody>
                     {
                                 stats.length ? 
                                 stats.map(stat => 
-                        <tr key={stat.idStatistics}>
-                        <td>
-                            <img src="../dist/img/avatar04.png" alt="Product 1" className="img-circle img-size-32 mr-2" />
-                            User {stat.agentid}
-                        </td>
-                        <td>{stat.statisticsRegionName}</td>
-                        {/*<td>{stat.region.country_detail.name}-{stat.region.region_name}</td>*/}
-                        <td>
-                        {(stat.statisticsValidate===true) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to invalidate this statistic?')) this.onClickInvalidate(stat.idStatistics) } }  style={validatedButton}>VALIDATED</button>
-                          :(stat.statisticsValidate===false) ? 
-                         <button  className="btn btn-sm" onClick={() =>{ if (window.confirm('Are you sure you wish to validate this statistic?')) this.onClickValidate(stat.idStatistics) } } style={greenButton} >VALIDATE</button>
-                          :null}
-
-                        </td>
-                        <td>
-                        <button type="button" className="btn"  data-toggle="modal" data-target={"#exampleModal" + stat.idStatistics}  style={blueStyle}>
-                        <i className="fas fa-search" />
-                        </button>
+                                    <tr key={stat.idStatistics}>
+                                    <td>{stat.statisticsRegionName}</td>
+                                    <td>{stat.nbDeaths}</td>
+                                    <td>{stat.nbRecovered}</td>
+                                    <td>{stat.nbConfirmed}</td>
+                                    <td>{stat.nbSuspected}</td>
+                                    <td> <button type="button" className="btn"  data-toggle="modal" data-target={"#exampleModal" + stat.idStatistics}  style={blueStyle}> <i className="fas fa-search" /></button>
                                     
                      {/*<!-- Modal -->*/}
                      <div className="modal fade" id={"exampleModal" + stat.idStatistics} tabIndex="-1" role="dialog" aria-labelledby={"exampleModalLabel"+stat.idStatistics} aria-hidden="true" >
@@ -345,11 +329,6 @@ export default class HealthAgent_statistics extends Component {
                                 
                         }
                          <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                         </tr>
                        
                        </tbody>
