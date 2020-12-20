@@ -6,7 +6,7 @@ import Footer from '../../Footer';
 import axios from 'axios';
 
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080'; 
 //const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 

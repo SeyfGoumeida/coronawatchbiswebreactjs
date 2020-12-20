@@ -8,7 +8,7 @@ import axios from 'axios';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080'; 
 //const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
@@ -406,9 +406,10 @@ submitHandler = e =>{
 
                     {(regionRisk==="NonValidatedRisk") ? 
                                     <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareregionRisk(idRegion) } } >Undeclare It As Risk Region</button>
-                                :(regionRisk==="NonRisk") ? 
-                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareregionRisk(idRegion) } }   >Declare It As Risk Region</button>
-                                     :null}          
+                    :(regionRisk==="NonRisk") ? 
+                                     <button type="button" className="btn btn-success" onClick={() =>{ if (window.confirm('Are you sure you wish to declare this region as a risk region?')) this.onClickDeclareregionRisk(idRegion) } }   >Declare It As Risk Region</button>                     
+                    :(regionRisk==="ValidatedRisk") ? 
+                                    <button type="button" className="btn btn-danger" onClick={() =>{ if (window.confirm('Are you sure you wish to undeclare this region as a risk region?')) this.onClickUndeclareregionRisk(idRegion) } } >Undeclare It As Risk Region</button>                                     :null}          
                      
                      </div>
                     </div>

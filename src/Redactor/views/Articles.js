@@ -10,7 +10,7 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from "jodit-react";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://localhost:8080'; 
 //const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
@@ -190,7 +190,7 @@ onSubmitEdit = e =>{
    
         axios.put(url,{  
             "title": this.state.title,
-            "content": this.state.content
+            "content": this.state.content,
         }/*,{
          headers: {
             'content-type': 'application/json',
@@ -335,8 +335,9 @@ onSubmitEdit = e =>{
         axios.post(url,
             {  
                 "title": this.state.title,
-                "content": this.state.content
-               // "articleRedactor": this.state.
+                "content": this.state.content,
+               
+
             }
         )
         .then(response => {
