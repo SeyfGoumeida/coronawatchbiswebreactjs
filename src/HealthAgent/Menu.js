@@ -42,12 +42,7 @@ export default class Menu extends Component {
                         <p id="nav-item1" style={blueStyle}>Virus Information</p>
                         </a>
                     </li>
-                    <li className="nav-item">
-                        <a href="/healthAgent_dashboard/historic" className="nav-link">
-                        <i className="nav-icon fa fa-history" style={{color:'#990099'}}/>
-                        <p id="nav-item2" style={blueStyle}>Regions Epidemic History</p>
-                        </a>
-                    </li>
+                   
                     </ul>
                 </nav>
                 {/* /.sidebar-menu */}
