@@ -6,8 +6,8 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import "../../../node_modules/video-react/dist/video-react.css";
 
-//const API_URL = "http://localhost:8080";
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = "http://localhost:8080";
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle = {
@@ -313,6 +313,7 @@ export default class Articles extends Component {
                                           key={comment.idCommentary}
                                         >
                                           {/* User image */}
+                                          
                                           <img
                                             className="img-circle img-sm"
                                             src="../dist/img/user5-128x128.jpg"
@@ -329,7 +330,14 @@ export default class Articles extends Component {
                                               ) : null}
                                             </span>
                                             {/* /.username */}
-                                            <p>{comment.commentContent} </p>
+                                            {comment.inappropriate === true
+                                               ? (
+                                                <p> *** INAPPROPRIATE ! *** </p>
+                                              ) : comment.inappropriate ===
+                                                false ? (
+                                                  <p>{comment.commentContent} </p>
+                                              ) : null}
+                                           
                                           </div>
                                           {/* /.comment-text */}
                                         </div>
