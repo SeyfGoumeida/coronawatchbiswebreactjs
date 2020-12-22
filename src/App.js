@@ -7,6 +7,7 @@ const loading = () => <div className="animated fadeIn pt-3 text-center">Loading.
 // *****Pages
 //Authentication
 const Login = React.lazy(() => import('./Authentication/SignIn'));
+const SignUp = React.lazy(() => import('./Authentication/Signup'));
 const Logout = React.lazy(() => import('./Authentication/Signout'));
 const Err404= React.lazy(() => import('./Authentication/Err404'));
 const Forgotpassword= React.lazy(() => import('./Authentication/Forgot_password'));
@@ -42,6 +43,7 @@ class App extends Component {
             <Switch>
             {/*Authentication*/}
             <Route exact path="/login" name="Login Page" component={Login} />
+            <Route exact path="/signup" name="Login Page" component={SignUp} />
             <Route exact path="/logout" name="Logout Page" component={Logout} />
             <Route exact path="/forgot_password" name="Forgot_password" component={ Forgotpassword}/>
             <Route exact path="/recover_password" name="Recover_password" component={ Recoverpassword}/>

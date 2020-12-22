@@ -20,7 +20,7 @@ const buttonStyle={
 };
 
 
-export default class SignIn extends Component {
+export default class Signup extends Component {
     constructor(props) {
         super(props)
         const accessToken = localStorage.getItem("accessToken")
@@ -32,9 +32,14 @@ export default class SignIn extends Component {
         }
        
         this.state = {
+            firstName:'',
+            lastName:'',
+            email:'',
             username: '',
             password: '',
-            loggedIn
+            userType:"WebUser",
+            loggedIn,
+            isSignedUp: false
         }
         this.changeHandler =this.changeHandler.bind(this)
         this.submitHandler =this.submitHandler.bind(this)
@@ -48,31 +53,36 @@ export default class SignIn extends Component {
     submitHandler = e =>{
         e.preventDefault()
         console.log(this.state)
-        let url = `${API_URL}/signin`;
+        let url = `${API_URL}/signup`;
         axios
             .post(url, {
-                "username":this.state.username,
-                "password":this.state.password
+                "userName":this.state.username,
+                "passWord":this.state.password,
+                "firstName":this.state.firstName,
+                "lastName":this.state.lastName,
+                "userType":this.state.userType,
+                "email":this.state.email,
             })
             .then(response => {
                 console.log(response)
-                localStorage.setItem("accessToken",response.data.accessToken)
-                localStorage.setItem("id",response.data.id)
-                localStorage.setItem("usertype",response.data.usertype)
+                //localStorage.setItem("accessToken",response.data.accessToken)
+                //localStorage.setItem("id",response.data.id)
+                //localStorage.setItem("usertype",response.data.usertype)
                 console.log(response.data)
+                this.setState({ isSignedUp: true })
+        
                 if (response.status === 200) {
-                    console.log ("User authenticated successfully");
-                    this.setState({
-                        loggedIn:true
-                    })
+                    console.log ("User created successfully");
+                    alert('user created successfully , Go to the login page');
+
                   }
             })
             .catch(error => {
                 console.log(error.message)
                 console.log(error)
                  
-                console.log("password or email incorrect");
-                alert('password or email incorrect!');
+                console.log("password or email already exist");
+                alert('password or email already exist');
 
             })
             console.log(this.state)
@@ -98,10 +108,14 @@ export default class SignIn extends Component {
         if (user_type==='Redactor'){
             return <Redirect to="/redactor_dashboard"/>
         }
+        if (this.state.isSignedUp) {
+            // redirect to home if signed up
+            return <Redirect to = {{ pathname: "/login" }} />;
+        }
 
     
         
-        const {username,password}=this.state
+        const {username,password,email,firstName,lastName}=this.state
         return (
             <body className="hold-transition login-page" style={bodyStyle}>
             <div>
@@ -120,13 +134,61 @@ export default class SignIn extends Component {
                                     name="username" 
                                     id="username" 
                                     className="form-control" 
-                                    placeholder="Email" 
+                                    placeholder="username" 
                                     value={username} 
                                     onChange={this.changeHandler}
                                  />
                                 <div className="input-group-append">
                                 <div className="input-group-text">
-                                    <span className="fas fa-envelope" />
+                                <span className="fas fa-user" />
+                                </div>
+                                </div>
+                            </div>
+                            <div className="input-group mb-3">
+                                <input 
+                                type="email"
+                                id="email"
+                                 name="email" 
+                                 className="form-control"
+                                  placeholder="email" 
+                                  value={email} 
+                                  onChange={this.changeHandler}
+                                  />
+                                <div className="input-group-append">
+                                <div className="input-group-text">
+                                <span className="fas fa-envelope" />
+                                </div>
+                                </div>
+                            </div>
+                            <div className="input-group mb-3">
+                                <input 
+                                type="firstName"
+                                id="firstName"
+                                 name="firstName" 
+                                 className="form-control"
+                                  placeholder="firstName" 
+                                  value={firstName} 
+                                  onChange={this.changeHandler}
+                                  />
+                                <div className="input-group-append">
+                                <div className="input-group-text">
+                                <span className="fas fa-user" />
+                                </div>
+                                </div>
+                            </div>
+                            <div className="input-group mb-3">
+                                <input 
+                                type="lastName"
+                                id="lastName"
+                                 name="lastName" 
+                                 className="form-control"
+                                  placeholder="lastName" 
+                                  value={lastName} 
+                                  onChange={this.changeHandler}
+                                  />
+                                <div className="input-group-append">
+                                <div className="input-group-text">
+                                <span className="fas fa-user" />
                                 </div>
                                 </div>
                             </div>
@@ -157,16 +219,11 @@ export default class SignIn extends Component {
                                 </div>
                                 {/* /.col */}
                                 <div className="col-4">
-                                <button type="submit" className="btn btn-info btn-block" style={buttonStyle}>Sign In</button>
+                                <button type="submit" className="btn btn-info btn-block" style={buttonStyle}>Sign UP</button>
                                 </div>
                                 {/* /.col */}
                             </div>
                             </form>
-
-                            {/* /.social-auth-links */}
-                            <p className="mb-1">
-                            <a href="/signup" style={writeStyle}>SIGN UP</a>
-                            </p>
                         </div>
                         {/* /.login-card-body */}
                         </div>
