@@ -4,14 +4,13 @@ import Menu from '../Menu';
 import Footer from '../../Footer';
 import {Redirect} from 'react-router-dom';
 import axios from 'axios';
-import { Player } from 'video-react';
 import "../../../node_modules/video-react/dist/video-react.css";
 import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from "jodit-react";
 
-const API_URL = 'http://localhost:8080'; 
-//const API_URL = 'https://coronawatchbis.herokuapp.com';
+//const API_URL = 'http://localhost:8080'; 
+const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
@@ -75,7 +74,8 @@ export default class Articles extends Component {
              title:'',
              attachments:null,
              attachments_get:[],
-             article_detail:null
+             article_detail:null,
+             attachments_list:[]
         }
         this.changeHandler =this.changeHandler.bind(this)
         this.submitHandler =this.submitHandler.bind(this)
@@ -221,12 +221,12 @@ onSubmitEdit = e =>{
         onClickAddAttachment = e =>{
             e.preventDefault();
             console.log(this.state)
-            let id= this.state.article_detail.id
+            let id= this.state.article_detail.idArticle
             //const accessToken = localStorage.getItem("accessToken")
             let form_data = new FormData();
-        form_data.append('attachments', this.state.attachments, this.state.attachments.name);
-        let url = `${API_URL}/${id}/attachments/`;
-        axios.post(url/*, form_data, {
+        form_data.append('file', this.state.attachments, this.state.attachments.name);
+        let url = `${API_URL}/Articles/Article/AddAttachment?id=${id}`;
+        axios.post(url, form_data,/* {
         headers: {
             'content-type': 'multipart/from-data',
             Authorization: `Token ${token}`
@@ -235,7 +235,7 @@ onSubmitEdit = e =>{
         .then(response => {
                     console.log(response)
                     console.log(response.data)
-                    if (response.status === 201) {
+                    if (response.status === 200) {
                         console.log ("Attachment added successfully")
                         alert('Attachment added  successfully');
                     }
@@ -379,6 +379,34 @@ onSubmitEdit = e =>{
               
         })
     }
+    //--------------------------------------------------------------------------------------------------------------------
+  //----------------------------------               GET ATTACHEMENT        ------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
+  autoClickGetAttachement = (id) => {
+    console.log(this.state);
+    //const token = localStorage.getItem("login")
+    let url = `${API_URL}/Articles/Article/Attachments?id=${id}`;
+    axios
+      .get(
+        url /*,{
+        headers: {
+        'content-type': 'application/json',
+        Authorization: `Token ${token}`
+    }
+    }*/
+      )
+      .then((response) => {
+        console.log(response);
+        this.setState({ attachments_list: response.data });
+        if (response.status === 200) {
+          console.log("List of attachements getted");
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+        console.log(error);
+      });
+  };
     render() {
         if(this.state.loggedIn ===false){
             return <Redirect to="/"/>
@@ -394,7 +422,7 @@ onSubmitEdit = e =>{
         }
         
 
-        const {article_list,content,title,attachments_get,comment_list}= this.state
+        const {article_list,content,title,attachments_get,comment_list,attachments_list}= this.state
         return (
             <div>
                
@@ -549,32 +577,25 @@ onSubmitEdit = e =>{
                                                         </div>
                                                     
                                                     <hr/>
-                                                    <label style={{color:'gray'}}>Article's attachments (Photo or video) : </label>
+                                                    <label style={{color:'gray'}}>Article's attachments (Photo) : </label>
                                                     {/* Attachment */}
+                                                    <button id="getattachmentbutton" type="button" onClick={() =>this.autoClickGetAttachement(post.idArticle)}className="btn btn-default btn-sm  "> Load attachement</button>
+
                                             {
                                                 attachments_get.length ?
-                                                attachments_get.map(attach => { return attach.attachment_type==='photo' ?
-                                                    <div key={attach.id}>
-                                                    <img className="img-fluid pad" src={attach.path} alt="Attachment_Image" style={{ width:'400px', height:'272px'}}/>
+                                                attachments_get.map(attach => {
+                                                    <div key={attach.name}>
+                                                        <img className="img-fluid pad" src={attach.url} alt="Attachment_Image" style={{ width:'400px', height:'272px'}}/>
                                                     <button type="button" onClick={() =>{ if (window.confirm('Are you sure you wish to delete this attachment?')) this.onClickDeleteAttachment(attach.id) } } className="btn btn-sm" style={orangeButton}>Delete</button>
-                                                    </div>
-                                                    :attach.attachment_type==='video' ?
-                                                    <div key={attach.path}>
-                                                    <Player className="img-fluid pad"
-                                                    playsInline src={attach.path} 
-                                                    fluid={false}
-                                                    width={480}
-                                                    height={272}/>
-                                                     <button type="button" onClick={() =>{ if (window.confirm('Are you sure you wish to delete this attachment?')) this.onClickDeleteAttachment(attach.id) } } className="btn btn-sm" style={orangeButton}>Delete</button>
                                                     
                                                     </div>
 
-                                                :null}
+                                               }
                                                 ):null
                                             }
                                             {/* /.attachment-block */}
                                             <hr/>
-                                             <label style={{color:'gray'}}>Add a new attachment (Photo or video) : </label>
+                                             <label style={{color:'gray'}}>Add a new attachment (Photo) : </label>
                                               <div>
                                                     <div className="input-group mb-3">
                                                         <div className="input-group-append">
@@ -582,7 +603,7 @@ onSubmitEdit = e =>{
                                                             <span className="fa fa-file" />
                                                         </div>
                                                         </div>
-                                                        <input type="file"  name="attachments" onChange={(e)=>this.onChangeFile(e)} accept="image/*|video/*" className="form-control" placeholder="Attachement..."/>
+                                                        <input type="file"  name="attachments" onChange={(e)=>this.onChangeFile(e)} accept="image/*" className="form-control" placeholder="Attachement..."/>
                                                         
                                                     </div>
                                                     <button  onClick={this.onClickAddAttachment} className="btn btn-sm" style={blueButton}>
@@ -620,29 +641,23 @@ onSubmitEdit = e =>{
                                             {/* post text */}
                                             <div dangerouslySetInnerHTML={{ __html: post.content }}/>
                                             {/* Attachment */}
-                                            {/*
-                                                post.attachments.length ?
-                                                post.attachments.map(attach => { return attach.attachment_type==='photo' ?
-                                                    <div key={attach.id}>
-                                                    <img className="img-fluid pad" src={attach.path} alt="Attachment_Image" style={{ width:'400px', height:'272px'}}/>
+                                                {attachments_list.length ?
+                                                attachments_list.map(attach => 
+                                                    <div key={attach.name}>
+                                                        <img className="img-fluid pad" src={attach.url} alt="Attachment_Image" style={{ width:'400px', height:'272px'}}/>
                                                     </div>
-                                                    :attach.attachment_type==='video' ?
-                                                    <div key={attach.path}>
-                                                    <Player className="img-fluid pad"
-                                                    playsInline src={attach.path} 
-                                                    fluid={false}
-                                                    width={480}
-                                                    height={272}/>
-                                                    </div>
-
-                                                :null}
+                                                  
                                                 ):null
-                                            */}
+                                                }
                                             {/* /.attachment-block */}
                                             <hr/>
+                                            <button id="getattachmentbutton" type="button" onClick={() =>this.autoClickGetAttachement(post.idArticle)}className="btn btn-default btn-sm  "> Load attachement</button>
+                                            <hr/>
+
                                             <button type="button" onClick={() =>this.onClickGetComments(post.idArticle)} className="btn btn-default btn-sm  "><i className="fas fa-plus"></i> See Comments</button>
                                         
                                         </div>
+
                                          {/* /.card-body */}
                                         <div className="card-footer card-comments">
                                         {
