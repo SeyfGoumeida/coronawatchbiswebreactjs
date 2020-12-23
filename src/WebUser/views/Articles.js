@@ -6,8 +6,8 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import "../../../node_modules/video-react/dist/video-react.css";
 
-//const API_URL = "http://localhost:8080";
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = "http://localhost:8080";
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle = {
@@ -58,6 +58,7 @@ export default class Articles extends Component {
       article_list: [],
       comment_list: [],
       commentcontent: "",
+      attachments_list:[]
     };
     this.onClickGetComments = this.onClickGetComments.bind(this);
     this.onClickAddComment = this.onClickAddComment.bind(this);
@@ -132,6 +133,34 @@ export default class Articles extends Component {
         console.log(error);
       });
   };
+  //--------------------------------------------------------------------------------------------------------------------
+  //----------------------------------               GET ATTACHEMENT        ------------------------------------------------
+  //--------------------------------------------------------------------------------------------------------------------
+  autoClickGetAttachement = (id) => {
+    console.log(this.state);
+    //const token = localStorage.getItem("login")
+    let url = `${API_URL}/Articles/Article/Attachments?id=${id}`;
+    axios
+      .get(
+        url /*,{
+        headers: {
+        'content-type': 'application/json',
+        Authorization: `Token ${token}`
+    }
+    }*/
+      )
+      .then((response) => {
+        console.log(response);
+        this.setState({ attachments_list: response.data });
+        if (response.status === 200) {
+          console.log("List of attachements getted");
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+        console.log(error);
+      });
+  };
 
   componentDidMount() {
     //const accessToken = localStorage.getItem("accessToken")
@@ -172,7 +201,7 @@ export default class Articles extends Component {
       return <Redirect to="/moderator_dashboard" />;
     }
 
-    const { article_list, comment_list, commentcontent } = this.state;
+    const { article_list, comment_list, commentcontent , attachments_list} = this.state;
 
     return (
       <div>
@@ -267,33 +296,25 @@ export default class Articles extends Component {
                                 {/* /.card-header */}
                                 <div className="card-body">
                                   {/* post text */}
-                                  <div
-                                    dangerouslySetInnerHTML={{
-                                      __html: post.content,
-                                    }}
-                                  />
-                                  {/* Attachment 
-                                            {
-                                                post.attachments.length ?
-                                                post.attachments.map(attach => { return attach.attachment_type==='photo' ?
-                                                    <div key={attach.id}>
-                                                    <img className="img-fluid pad" src={attach.path} alt="Attachment_Image" style={{ width:'400px', height:'270px'}}/>
-                                                    </div>
-                                                    :attach.attachment_type==='video' ?
-                                                    <div key={attach.path}>
-                                                    <Player playsInline src={attach.path} 
-                                                    className="img-fluid pad"
-                                                    fluid={false}
-                                                    width={480}
-                                                    height={272}/>
-                                                    </div>
+                                  
+                                  <div dangerouslySetInnerHTML={{ __html: post.content, }}/>
+                                  <hr />
 
-                                                :null}
-                                                ):null
-                                            }
-                                            */}
+                                  <span style={{ textAlign:'center', display: 'block'}} >
+                                        <img id="myImg" src = "../../dist/img/CoronaWatchLogo.png" className="img-fluid pad"  alt="Attachment_Image" style={{ width:'30%', height:'30%',alignself:'center'} }/>
+                                 
+
+                                    { attachments_list.length ?
+                                      attachments_list.map(attach => {
+                                      document.getElementById("myImg").src = attach.url
+                                      console.log(attachments_list.length);
+                                      }
+                                      )
+                                      :null}
+                                 </span>
                                   {/* /.attachment-block */}
                                   <hr />
+                                  <button id="getattachmentbutton" type="button" onClick={() =>this.autoClickGetAttachement(post.idArticle)}className="btn btn-default btn-sm  "> Load attachement</button>
                                   <button
                                     type="button"
                                     onClick={() =>
@@ -303,7 +324,9 @@ export default class Articles extends Component {
                                   >
                                     <i className="fas fa-plus"></i> See Comments
                                   </button>
+                                 
                                 </div>
+                                
                                 {/* /.card-body */}
                                 <div className="card-footer card-comments">
                                   {comment_list.length
@@ -406,5 +429,6 @@ export default class Articles extends Component {
         <Footer />
       </div>
     );
+    
   }
 }
