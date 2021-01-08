@@ -6,8 +6,8 @@ import { Redirect } from "react-router-dom";
 import axios from "axios";
 import "../../../node_modules/video-react/dist/video-react.css";
 
-//const API_URL = "http://localhost:8080";
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = "http://localhost:8080";
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle = {

@@ -9,8 +9,8 @@ import 'jodit';
 import 'jodit/build/jodit.min.css';
 import JoditEditor from "jodit-react";
 
-//const API_URL = 'http://localhost:8080'; 
-const API_URL = 'https://coronawatchbis.herokuapp.com';
+const API_URL = 'http://localhost:8080'; 
+//const API_URL = 'https://coronawatchbis.herokuapp.com';
 
 //Styles
 const bodyStyle={
